@@ -32,7 +32,7 @@ h2{font-size:19px;margin:0 0 12px;letter-spacing:-.3px}.greeting{padding:20px;bo
 <p class="footerhint">Protótipo v2 · Não inclua dados de pacientes nem identificadores pessoais.</p>
 </div>
 <div class="composer"><div class="composeinner"><input id="command" placeholder="Digite um comando para a Zia…" autocomplete="off"><button class="photo" id="photoBtn" title="Fotografar ou escolher imagem">▧</button><button class="mic" id="micBtn" title="Falar">🎙</button><button class="send" id="sendBtn" aria-label="Enviar">➤</button><input id="photoInput" type="file" accept="image/*" capture="environment" class="hidden"></div></div>
-<div id="photoModal" class="modal hidden"><div class="modalbox"><div class="modalhead"><h2>Mostrar uma imagem à Zia</h2><button class="smallbtn" id="closePhoto">Fechar ✕</button></div><p class="muted" style="font-size:14px">A imagem será analisada no seu dispositivo/navegador apenas para este protótipo, usando os dados que você fornecer. A leitura automática por IA ainda não está conectada; você pode descrever o que aparece e registrar a interpretação.</p><img id="photoPreview" class="preview hidden" alt="Imagem selecionada"><label class="fieldlabel" for="photoQuestion">O que você quer que eu observe?</label><input id="photoQuestion" class="field" placeholder="Ex.: Leia a temperatura e a umidade do visor"><label class="fieldlabel" for="photoNotes">Leitura ou observações (se precisar corrigir)</label><textarea id="photoNotes" class="field" rows="3" placeholder="Digite os valores que consegue ler…"></textarea><div class="row" style="margin-top:12px"><button class="secondary" id="chooseAgain">Escolher outra foto</button><button class="primary" id="savePhotoNote">Salvar observação</button></div><div id="photoResult" class="result hidden"></div></div></div>
+<div id="photoModal" class="modal hidden"><div class="modalbox"><div class="modalhead"><h2>Mostrar uma imagem à Zia</h2><button class="smallbtn" id="closePhoto">Fechar ✕</button></div><p class="muted" style="font-size:14px">A imagem e sua pergunta serão enviadas ao serviço de IA para análise. Confira as respostas antes de usar informações em tarefas do laboratório; não envie dados identificáveis de pacientes.</p><img id="photoPreview" class="preview hidden" alt="Imagem selecionada"><label class="fieldlabel" for="photoQuestion">O que você quer que eu observe?</label><input id="photoQuestion" class="field" placeholder="Ex.: Leia a temperatura e a umidade do visor"><label class="fieldlabel" for="photoNotes">Observações adicionais (opcional)</label><textarea id="photoNotes" class="field" rows="3" placeholder="Digite os valores que consegue ler…"></textarea><div class="row" style="margin-top:12px"><button class="secondary" id="chooseAgain">Escolher outra foto</button><button class="primary" id="savePhotoNote">Analisar imagem</button></div><div id="photoResult" class="result hidden"></div></div></div>
 <script>
 const $=id=>document.getElementById(id),dayKey=()=>{let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`},fmtDate=()=>new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
 const initialMaterials=[{id:'cone',name:'Tubo cone',qty:30,certainty:'Estimado',unit:'unidades'},{id:'culture',name:'Tubo de urocultura',qty:0,certainty:'A conferir',unit:'unidades'},{id:'db',name:'Tubo de transporte DB 4 mL',qty:50,certainty:'Estimado',unit:'unidades'},{id:'bottle_p',name:'Frasco de urina 24h com conservante',qty:0,certainty:'A conferir',unit:'unidades'},{id:'bottle_n',name:'Frasco de urina 24h sem conservante',qty:0,certainty:'A conferir',unit:'unidades'},{id:'bags',name:'Sacos de transporte',qty:0,certainty:'Estimado',unit:'unidades'}];
@@ -73,6 +73,51 @@ $('backupBtn').onclick=backup;$('exportBtn').onclick=backup;
 $('micBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){reply('O reconhecimento de voz não está disponível neste navegador. Tente Chrome no Android ou digite.');return}let rec=new SR();rec.lang='pt-BR';rec.interimResults=false;rec.maxAlternatives=1;$('micBtn').classList.add('listening');rec.onresult=e=>command(e.results[0][0].transcript);rec.onerror=()=>reply('Não consegui acessar o microfone ou entender. Tente de novo ou digite.');rec.onend=()=>$('micBtn').classList.remove('listening');try{rec.start()}catch(e){$('micBtn').classList.remove('listening');reply('Não consegui iniciar o microfone.')}};
 $('photoBtn').onclick=()=>$('photoInput').click();$('chooseAgain').onclick=()=>$('photoInput').click();$('photoInput').onchange=e=>{let f=e.target.files?.[0];if(!f)return;if(!f.type.startsWith('image/')){alert('Escolha uma imagem.');return}currentImage=f;let url=URL.createObjectURL(f);$('photoPreview').src=url;$('photoPreview').classList.remove('hidden');$('photoResult').classList.add('hidden');$('photoModal').classList.remove('hidden');$('photoNotes').value='';$('photoQuestion').value='';e.target.value=''};
 $('closePhoto').onclick=()=>$('photoModal').classList.add('hidden');$('photoModal').onclick=e=>{if(e.target===$('photoModal'))$('photoModal').classList.add('hidden')};
-$('savePhotoNote').onclick=()=>{if(!currentImage){reply('Escolha uma foto primeiro.');return}let question=$('photoQuestion').value.trim()||'Imagem enviada para análise',notes=$('photoNotes').value.trim();let msg=`Imagem anexada: ${currentImage.name}. Pedido: ${question}. ${notes?'Observação registrada: '+notes:'Nenhuma leitura manual informada.'}`;log(msg,'image');$('photoResult').textContent='Observação salva no histórico. Importante: este protótipo ainda não conecta uma IA visual para ler automaticamente a imagem. Confira os números diretamente antes de usar os dados.';$('photoResult').classList.remove('hidden');reply('Registrei a observação sobre a imagem no histórico. A leitura automática por IA ainda não está conectada, então preciso que você confira ou digite os valores.');};
+async function imageToBase64(file){
+  const bitmap=await createImageBitmap(file);
+  const maxSide=1600,scale=Math.min(1,maxSide/Math.max(bitmap.width,bitmap.height));
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(bitmap.width*scale));
+  canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+  const ctx=canvas.getContext('2d');
+  ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+  bitmap.close?.();
+  const dataUrl=canvas.toDataURL('image/jpeg',0.85);
+  return {imageBase64:dataUrl.split(',')[1],mimeType:'image/jpeg'};
+}
+$('savePhotoNote').onclick=async()=>{
+  if(!currentImage){reply('Escolha uma foto primeiro.');return}
+  const button=$('savePhotoNote');
+  const question=$('photoQuestion').value.trim()||'Descreva a imagem e destaque as informações visíveis.';
+  const notes=$('photoNotes').value.trim();
+  button.disabled=true;button.textContent='Analisando…';
+  $('photoResult').textContent='Enviando a imagem para análise. Aguarde…';
+  $('photoResult').classList.remove('hidden');
+  try{
+    const encoded=await imageToBase64(currentImage);
+    const response=await fetch('https://zia-gemini-api.kbelima18.workers.dev/',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({...encoded,question,notes})
+    });
+    let data={};
+    try{data=await response.json()}catch(e){}
+    if(!response.ok||data.error){
+      const detail=data.error||`O serviço respondeu com o código ${response.status}.`;
+      throw new Error(detail);
+    }
+    const description=data.description||data.text||data.response;
+    if(!description)throw new Error('A resposta chegou, mas não trouxe uma descrição da imagem.');
+    $('photoResult').textContent=description;
+    log(`Análise de imagem (${currentImage.name}). Pergunta: ${question}. Resposta: ${description}${notes?' Observações fornecidas: '+notes:''}`,'image');
+    reply('Recebi a análise da imagem. Confira a resposta na janela antes de usar qualquer informação no trabalho.');
+  }catch(err){
+    const msg=err?.message||'Não consegui analisar a imagem.';
+    $('photoResult').textContent=`Não consegui analisar a imagem. ${msg}\n\nConfira a conexão e tente novamente. Você também pode digitar suas observações abaixo e tentar outra vez.`;
+    reply('Não consegui concluir a análise da imagem. A mensagem de erro está mostrada na janela.');
+  }finally{
+    button.disabled=false;button.textContent='Analisar imagem';
+  }
+};
 render();
 </script></body></html>
