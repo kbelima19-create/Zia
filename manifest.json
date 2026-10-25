@@ -11,6 +11,7 @@
   "background_color": "#f6f5f1",
   "theme_color": "#e9e5d9",
   "icons": [
+    {"src": "zia-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
     {"src": "zia-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
   ]
 }
