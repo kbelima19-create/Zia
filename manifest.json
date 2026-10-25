@@ -1,0 +1,16 @@
+{
+  "id": "/Zia/",
+  "name": "Zia — sua assistente",
+  "short_name": "Zia",
+  "description": "Sua assistente de trabalho",
+  "lang": "pt-BR",
+  "start_url": "/Zia/",
+  "scope": "/Zia/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f5f1",
+  "theme_color": "#e9e5d9",
+  "icons": [
+    {"src": "zia-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
