@@ -219,11 +219,7 @@ function renderTasks(){
 }
 function bindDrag(){
  document.querySelectorAll('[data-drag]').forEach(h=>{
-  h.ondragstart=e=>e.preventDefault();
-  h.ontouchstart=null;
-  let node=null;
-  let startY=0;
-  let moved=false;
+  let node=null,startY=0,moved=false;
 
   h.onpointerdown=e=>{
    if(e.pointerType==='mouse'&&e.button!==0)return;
@@ -233,43 +229,49 @@ function bindDrag(){
    startY=e.clientY;
    moved=false;
    node.classList.add('dragging');
-   try{h.setPointerCapture(e.pointerId)}catch(err){}
+
+   document.onpointermove=ev=>{
+    if(!node)return;
+    ev.preventDefault();
+    if(Math.abs(ev.clientY-startY)>5)moved=true;
+    if(!moved)return;
+
+    const group=node.dataset.group;
+    const siblings=[...document.querySelectorAll('.task[data-group="'+group+'"]')]
+     .filter(x=>x!==node);
+    const target=siblings.find(x=>{
+     const r=x.getBoundingClientRect();
+     return ev.clientY<r.top+r.height/2;
+    });
+
+    if(target)target.parentNode.insertBefore(node,target);
+    else if(siblings.length)node.parentNode.appendChild(node);
+   };
+
+   document.onpointerup=()=>{
+    if(!node)return;
+    const dragged=node;
+    dragged.classList.remove('dragging');
+
+    if(moved){
+     const ids=[...document.querySelectorAll(
+      '.task[data-group="'+dragged.dataset.group+'"]'
+     )].map(x=>x.dataset.task);
+
+     const order=db.taskOrder.global||[];
+     db.taskOrder.global=[
+      ...order.filter(id=>!ids.includes(id)),
+      ...ids
+     ];
+     save();
+    }
+
+    node=null;
+    document.onpointermove=null;
+    document.onpointerup=null;
+    renderTasks();
+   };
   };
-
-  h.onpointermove=e=>{
-   if(!node)return;
-   if(Math.abs(e.clientY-startY)>5)moved=true;
-   if(!moved)return;
-
-   let siblings=[...document.querySelectorAll('.task[data-group="'+node.dataset.group+'"]')]
-    .filter(x=>x!==node);
-   let target=siblings.find(x=>{
-    let r=x.getBoundingClientRect();
-    return e.clientY<r.top+r.height/2;
-   });
-
-   if(target)target.parentNode.insertBefore(node,target);
-   else if(siblings.length)node.parentNode.appendChild(node);
-  };
-
-  const finish=()=>{
-   if(!node)return;
-   node.classList.remove('dragging');
-
-   if(moved){
-    let ids=[...document.querySelectorAll('.task[data-group="'+node.dataset.group+'"]')]
-     .map(x=>x.dataset.task);
-    let order=db.taskOrder.global||[];
-    db.taskOrder.global=[...order.filter(id=>!ids.includes(id)),...ids];
-    save();
-   }
-
-   node=null;
-   renderTasks();
-  };
-
-  h.onpointerup=finish;
-  h.onpointercancel=finish;
  });
 }
 function renderStock(){
