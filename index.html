@@ -224,6 +224,8 @@ function renderTasks(){
  $('planningCard').innerHTML=`<strong>${apps.length?'Atenção: tarde com atendimento':'Planejamento de hoje'}</strong><br>${apps.length?`Há ${apps.length} atendimento(s) previsto(s) à tarde. Priorize clientes, coletas e tarefas obrigatórias. Se houver mais pessoas pela manhã, tente adiantar limpeza e estoque.`:'Prioridade: clientes, coletas e tarefas obrigatórias. Faça as tarefas flexíveis apenas quando houver disponibilidade.'}${role?`<br><br><strong>Escala de sábado:</strong> ${esc(role)}.`:''}`;
  $('appointments').innerHTML=db.appointments.length?db.appointments.map(a=>`<div class="task"><div class="taskmain"><div class="tasktitle">${esc(a.name)}</div><div class="taskmeta">${weekdays[a.day]} à tarde · ${a.frequency==='weekly'?'Toda semana':'A cada 15 dias'}${a.frequency==='biweekly'?' · início '+esc(a.startDate):''}</div></div><button class="mini" data-edit-appointment="${a.id}">Editar</button><button class="mini" data-delete-appointment="${a.id}">×</button></div>`).join(''):'<div class="empty">Cadastre os profissionais que atendem à tarde. A Zia avisará quando adiantar tarefas flexíveis.</div>';
  $('dayNote').value=db.dayNotes[dayKey()]||'';bindDrag();
+$('pendingCount').textContent=`${db.pendingTasks.length} ${db.pendingTasks.length===1?'tarefa':'tarefas'}`;
+$('pendingTasks').innerHTML=db.pendingTasks.length?db.pendingTasks.map(t=>`<div class="task"><div class="taskmain"><div class="tasktitle">${esc(t.title)}</div><div class="taskmeta">${esc(t.note||'Adiada')}</div></div></div>`).join(''):'Nenhuma pendência por enquanto. 🌱';
 }
 function bindDrag(){
  document.querySelectorAll('[data-drag]').forEach(h=>{
