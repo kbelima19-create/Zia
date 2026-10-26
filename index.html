@@ -182,6 +182,7 @@ const defaults=[
 function fresh(){return {customTasks:[],materials:initialMaterials.map(x=>({...x})),history:[],completions:{},movements:[],appointments:[],routineOverrides:{},hiddenTasks:{},taskOrder:{},dayNotes:{},weeklyCompletions:{},settings:{speechMode:'all',voiceURI:'',rate:.92,pitch:1.08}}}
 let db;try{db=JSON.parse(localStorage.getItem('ziaDB'))||fresh()}catch(e){db=fresh()}
 for(const k of ['customTasks','materials','history','completions','movements','appointments','routineOverrides','hiddenTasks','taskOrder','dayNotes','weeklyCompletions'])db[k]??=(k==='materials'?initialMaterials.map(x=>({...x})):['appointments','customTasks','history','movements'].includes(k)?[]:{});
+db.pendingTasks??=[];
 db.settings??={speechMode:'all',voiceURI:'',rate:.92,pitch:1.08};
 let currentImage=null,availableVoices=[];
 function save(){localStorage.setItem('ziaDB',JSON.stringify(db))}
