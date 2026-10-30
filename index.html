@@ -106,25 +106,116 @@ h2{font-size:19px;margin:0 0 12px}
  <button class="active" data-tab="home">Hoje</button><button data-tab="stock">Estoque</button><button data-tab="history">Histórico</button>
 </div>
 
+
 <section id="home">
- <div id="planningCard" class="notice"></div>
- <div class="card"><div class="sectionhead"><h2>Seu próximo passo</h2><span class="eyebrow" id="progress"></span></div><div id="nextTask" class="empty">Carregando…</div></div>
- <div class="card">
-  <div class="sectionhead"><h2>Rotina principal</h2><div class="tasktools"><button class="smallbtn" id="editRoutineBtn">Editar padrão</button><button class="smallbtn" id="addTaskBtn">＋ Hoje</button></div></div>
-  <p class="muted" style="font-size:12px">Arraste pelo símbolo ↕ para mudar a ordem. A ordem fica salva para os próximos dias.</p><div id="tasks"></div>
- </div>
- <div class="card"><div class="sectionhead"><h2>Se houver tempo</h2><button class="smallbtn" id="addFlexibleBtn">＋ Tarefa</button></div><div id="flexTasks"></div></div>
- <div class="card">
-  <div class="sectionhead">
-    <h2>📌 Pendências</h2>
-    <span class="eyebrow" id="pendingCount">0 tarefas</span>
+
+  <!-- CALENDÁRIO SEMANAL -->
+  <div class="card" id="calendarCard">
+    <div class="sectionhead">
+      <h2 id="dayNavMonth">Calendário</h2>
+      <div class="tasktools">
+        <button class="smallbtn" id="prevWeek" aria-label="Semana anterior">‹</button>
+        <button class="smallbtn" id="nextWeek" aria-label="Próxima semana">›</button>
+      </div>
+    </div>
+    <div id="dayNavDays"></div>
   </div>
-  <div id="pendingTasks" class="empty">Nenhuma pendência por enquanto. 🌱</div>
- </div>
- <div class="card"><div class="sectionhead"><h2>Atendimentos da tarde</h2><button class="smallbtn" id="addAppointmentBtn">＋ Profissional</button></div><div id="appointments"></div></div>
- <div class="card"><div class="sectionhead"><h2>Ocorrências de hoje</h2><button class="smallbtn" id="saveNoteBtn">Salvar nota</button></div><textarea id="dayNote" class="field" rows="3" placeholder="Ex.: solicitação de foto, atendimento extra ou tarefa adiada…"></textarea><p class="muted">Esta anotação vale somente para hoje.</p></div>
- <div class="row"><button class="secondary" data-command="O que falta fazer hoje?">O que falta hoje?</button><button class="secondary" data-command="Mostrar meu estoque">Ver estoque</button></div>
+
+  <!-- CONTROLES DOS TURNOS -->
+  <div id="shiftPanel"></div>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div id="legacyHome">
+
+    <div id="planningCard" class="notice"></div>
+
+    <!-- PRÓXIMO PASSO -->
+    <div class="card">
+      <div class="sectionhead">
+        <h2>Seu próximo passo</h2>
+        <span class="eyebrow" id="progress"></span>
+      </div>
+      <div id="nextTask" class="empty">Carregando…</div>
+    </div>
+
+    <!-- ROTINA PRINCIPAL -->
+    <div class="card">
+      <div class="sectionhead">
+        <h2>Rotina principal</h2>
+        <div class="tasktools">
+          <button class="smallbtn" id="editRoutineBtn">Editar padrão</button>
+          <button class="smallbtn" id="addTaskBtn">＋ Hoje</button>
+        </div>
+      </div>
+
+      <p class="muted" style="font-size:12px">
+        Use as setinhas para mudar a ordem das atividades.
+        A ordem ficará salva.
+      </p>
+
+      <div style="font-weight:700;margin:12px 0 8px">Turno da manhã</div>
+      <div id="tasks"></div>
+
+      <div style="font-weight:700;margin:18px 0 8px">Turno da tarde</div>
+      <div id="afternoonTasks"></div>
+    </div>
+
+    <!-- TAREFAS FLEXÍVEIS -->
+    <div class="card">
+      <div class="sectionhead">
+        <h2>Se houver tempo</h2>
+        <button class="smallbtn" id="addFlexibleBtn">＋ Tarefa</button>
+      </div>
+      <div id="flexTasks"></div>
+    </div>
+
+    <!-- PENDÊNCIAS -->
+    <div class="card">
+      <div class="sectionhead">
+        <h2>📌 Pendências</h2>
+        <span class="eyebrow" id="pendingCount">0 tarefas</span>
+      </div>
+      <div id="pendingTasks" class="empty">
+        Nenhuma pendência por enquanto. 🌱
+      </div>
+    </div>
+
+    <!-- ATENDIMENTOS -->
+    <div class="card">
+      <div class="sectionhead">
+        <h2>Atendimentos da tarde</h2>
+        <button class="smallbtn" id="addAppointmentBtn">＋ Profissional</button>
+      </div>
+      <div id="appointments"></div>
+    </div>
+
+    <!-- ANOTAÇÕES DO DIA -->
+    <div class="card">
+      <div class="sectionhead">
+        <h2>Ocorrências de hoje</h2>
+        <button class="smallbtn" id="saveNoteBtn">Salvar nota</button>
+      </div>
+      <textarea
+        id="dayNote"
+        class="field"
+        rows="3"
+        placeholder="Ex.: solicitação de foto, atendimento extra ou tarefa adiada…"
+      ></textarea>
+      <p class="muted">Esta anotação vale somente para hoje.</p>
+    </div>
+
+    <div class="row">
+      <button class="secondary" data-command="O que falta fazer hoje?">
+        O que falta hoje?
+      </button>
+      <button class="secondary" data-command="Mostrar meu estoque">
+        Ver estoque
+      </button>
+    </div>
+
+  </div>
 </section>
+
 
 <section id="stock" class="hidden">
  <div class="notice">Saldos iniciais são estimativas. Registre recebimentos e correções para manter o controle atualizado.</div>
