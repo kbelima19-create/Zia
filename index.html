@@ -487,11 +487,75 @@ h2{font-size:19px;margin:0 0 12px}
 
 <script>
 const $=id=>document.getElementById(id);
-const dayKey=()=>{let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+
+let selectedDate = new Date();
+
+const realTodayKey = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+};
+
+const dayKey = () => {
+  const d = selectedDate;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+};
+
 const dateObj=k=>new Date((k||dayKey())+'T12:00:00');
 const weekKey=k=>{let d=dateObj(k),n=(d.getDay()+6)%7;d.setDate(d.getDate()-n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const fmtDate=()=>new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
 const weekdays=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+  
+const shortWeekdays = ['dom','seg','ter','qua','qui','sex','sáb'];
+
+function renderCalendar() {
+  const selectedKey = dayKey();
+  const todayKey = realTodayKey();
+  const mondayKey = weekKey(selectedKey);
+  const monday = dateObj(mondayKey);
+
+  $('dayNavMonth').textContent = monday.toLocaleDateString('pt-BR', {
+    month: 'long',
+    year: 'numeric'
+  });
+
+  let html = '';
+
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + i);
+
+    const key = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+
+    const active = key === selectedKey ? 'active' : '';
+    const today = key === todayKey ? 'today' : '';
+
+    const hasCompletion = Object.keys(db.completions || {}).some(
+      k => k === key && Object.keys(db.completions[k] || {}).length > 0
+    );
+
+    const hasAppointment = (db.appointments || []).some(
+      a => appointmentOccurs(a, key)
+    );
+
+    const hasItems = hasCompletion || hasAppointment;
+
+    html += `
+      <button
+        type="button"
+        class="daynav-day ${active} ${today} ${hasItems ? 'has-items' : ''}"
+        data-calendar-date="${key}"
+        aria-label="${date.toLocaleDateString('pt-BR')}"
+      >
+        <span>${shortWeekdays[date.getDay()]}</span>
+        <span class="day-number">${date.getDate()}</span>
+        <span class="day-indicator"></span>
+      </button>
+    `;
+  }
+
+  $('dayNavDays').innerHTML = html;
+}
+
 const initialMaterials=[
 {id:'cone',name:'Tubo cone',qty:30,certainty:'Estimado',unit:'unidades'},
 {id:'culture',name:'Tubo de urocultura',qty:0,certainty:'A conferir',unit:'unidades'},
@@ -542,6 +606,8 @@ function taskHtml(t){return `<div class="task" data-task="${esc(t.id)}" data-gro
 <div class="taskmain"><div class="tasktitle" style="${t.done?'text-decoration:line-through;color:#777':''}">${esc(t.title)}</div><div class="taskmeta">${esc(t.time||'Sem horário')} · ${esc(t.kind||'Adicional')}</div>${t.done?'<span class="pill">Concluída</span>':''}</div>
 <div class="tasktools"><button class="mini" data-edit-task="${esc(t.id)}">✎</button>${t.id.startsWith('custom_')?`<button class="mini" data-delete-task="${esc(t.id)}">×</button>`:''}</div></div>`}
 function renderTasks(){
+  renderCalendar();
+  $('todayLabel').textContent=selectedDate.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
  const ts=todaysTasks(),done=ts.filter(t=>t.done).length;
  $('progress').textContent=`${done} de ${ts.length} concluídas`;
  for(const [id,g] of [['tasks','main'],['flexTasks','flex']]){let group=ts.filter(t=>(t.group||'main')===g);$(id).innerHTML=group.length?group.map(taskHtml).join(''):'<div class="empty">Nenhuma tarefa nesta seção.</div>'}
@@ -685,6 +751,12 @@ function command(raw){
 }
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['home','stock','history'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});
 document.body.addEventListener('click',e=>{
+  let day=e.target.closest('[data-calendar-date]');
+if(day){
+selectedDate=new Date(day.dataset.calendarDate+'T12:00:00');
+renderTasks();
+return;
+}
  let c=e.target.closest('[data-check]');if(c)complete(c.dataset.check);
  let et=e.target.closest('[data-edit-task]');if(et)editTask(et.dataset.editTask);
  let dt=e.target.closest('[data-delete-task]');if(dt&&confirm('Excluir esta tarefa de hoje?')){db.customTasks=db.customTasks.filter(t=>t.id!==dt.dataset.deleteTask);save();renderTasks()}
@@ -692,6 +764,15 @@ document.body.addEventListener('click',e=>{
  let da=e.target.closest('[data-delete-appointment]');if(da&&confirm('Excluir este atendimento?')){db.appointments=db.appointments.filter(a=>a.id!==da.dataset.deleteAppointment);save();renderTasks()}
  let ed=e.target.closest('[data-correct]');if(ed){let m=db.materials.find(x=>x.id===ed.dataset.correct),v=prompt(`Saldo físico conferido de ${m.name}:`,m.qty);if(v!==null&&v.trim()!==''&&Number(v)>=0){let old=m.qty;m.qty=Number(v);m.certainty='Contagem física confirmada';save();log(`Correção: ${m.name}, de ${old} para ${m.qty}.`);renderStock();reply(`Saldo atualizado para ${m.qty} ${m.unit}.`)}}
 });
+  $('prevWeek').onclick=()=>{
+  selectedDate.setDate(selectedDate.getDate()-7);
+  renderTasks();
+};
+
+$('nextWeek').onclick=()=>{
+  selectedDate.setDate(selectedDate.getDate()+7);
+  renderTasks();
+};
 $('sendBtn').onclick=()=>command($('commandInput').value);$('commandInput').onkeydown=e=>{if(e.key==='Enter')command(e.target.value)};
 document.querySelectorAll('[data-command]').forEach(b=>b.onclick=()=>command(b.dataset.command));
 $('addTaskBtn').onclick=()=>addTask('main');$('addFlexibleBtn').onclick=()=>addTask('flex');$('editRoutineBtn').onclick=editRoutine;$('addAppointmentBtn').onclick=addAppointment;
