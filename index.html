@@ -14,7 +14,7 @@ button,input,textarea,select{font:inherit}
 button{border:0;cursor:pointer;color:inherit}
 .app{max-width:760px;margin:auto;padding:16px 14px 115px}
 header{display:flex;align-items:center;gap:10px;padding:6px 0 16px}
-.brand{flex:1}.brand h1{font-size:25px;margin:0;font-weight:700}
+.brand{flex:1}.brand h1{font-size:42px;line-height:1.02;letter-spacing:.3px;margin:0;font-weight:800}
 .sub,.muted,.taskmeta{color:var(--muted);font-size:13px}
 .iconbtn{width:42px;height:42px;border-radius:14px;background:var(--control);color:var(--control-text);border:1px solid var(--line)}
 h2{font-size:19px;margin:0 0 12px}
@@ -61,9 +61,12 @@ h2{font-size:19px;margin:0 0 12px}
 .modal{position:fixed;inset:0;background:#25251f88;display:flex;align-items:flex-end;justify-content:center;z-index:10;padding:10px}
 .modalbox{background:var(--bg);border-radius:22px 22px 14px 14px;width:100%;max-width:600px;max-height:90vh;overflow:auto;padding:17px}
 .modalhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#settingsModal .modalbox{padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+#settingsModal .card{background:var(--card);border-color:var(--line)}
+#settingsModal button:disabled{cursor:not-allowed}
 .preview{width:100%;max-height:300px;object-fit:contain;border-radius:13px}
 .result{white-space:pre-wrap;background:#eeece5;padding:12px;border-radius:12px;margin-top:12px;font-size:14px}
-#petButton{width:78px;height:78px;flex:0 0 78px;border:0;background:transparent;padding:0}
+#petButton{width:82px;height:82px;flex:0 0 82px;border:0;background:transparent;padding:0;cursor:pointer}
 .pet{width:74px;height:74px;animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 4px 3px #0001)}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-5px) rotate(2deg)}}
 .pet.bounce{animation:jump .5s ease}
@@ -261,6 +264,11 @@ body[data-period="night"] .taskmenuitems button{background:#3a464e;color:#f2f4f0
 .taskmenuitems button{width:100%;text-align:left;padding:9px 10px;border-radius:8px;background:var(--soft);font-size:13px;color:var(--ink)}
 .rest-screen{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:25px 18px;text-align:center;margin:12px 0}
 .rest-screen h2{font-size:25px;margin:5px 0 8px}.rest-screen p{color:var(--muted);margin:0}
+.rest-mascot{width:112px;height:112px;display:block;margin:0 auto 8px;overflow:visible;filter:drop-shadow(0 5px 5px #00000012)}
+.rest-mascot .sleep-body{transform-origin:50px 58px;animation:sleep-breathe 3.8s ease-in-out infinite}
+.rest-mascot .sleep-z{animation:float-z 2.8s ease-in-out infinite}
+@keyframes sleep-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035,1.015)}}
+@keyframes float-z{0%,100%{opacity:.45;transform:translateY(2px)}50%{opacity:1;transform:translateY(-4px)}}
 .petbubble{cursor:pointer;border:1px solid var(--line);font:inherit;text-align:left}
 @media(max-width:420px){.task{gap:6px}.tasktitle{line-height:1.35}.taskmenuitems{min-width:148px}}
 </style>
@@ -269,8 +277,6 @@ body[data-period="night"] .taskmenuitems button{background:#3a464e;color:#f2f4f0
 <div class="app">
 <header>
  <div class="brand"><h1>zia <span style="font-size:16px">✳</span></h1><div class="sub">Sua assistente de trabalho</div></div>
- <button class="iconbtn" id="voiceBtn" title="Configurações de voz">🔊</button>
- <button class="iconbtn" id="backupBtn" title="Exportar backup">↥</button>
 </header>
 
 <div class="greeting">
@@ -419,11 +425,17 @@ body[data-period="night"] .taskmenuitems button{background:#3a464e;color:#f2f4f0
 </div>
 
 <div class="petwrap"><button id="petBubbleClose" class="petbubble" aria-label="Fechar mensagem da Zia">Oi! Toque em mim quando precisar. 🌱　×</button></div>
-<div class="composer"><div class="composeinner"><input id="commandInput" placeholder="Digite um comando para a Zia…" autocomplete="off"><button class="photo" id="photoBtn" title="Escolher foto">▧</button><button class="mic" id="micBtn" title="Falar">🎙</button><button class="send" id="sendBtn" aria-label="Enviar">➤</button><input id="photoInput" type="file" accept="image/*" capture="environment" class="hidden"></div></div>
+<div class="composer"><div class="composeinner"><input id="commandInput" placeholder="Digite um comando para a Zia…" autocomplete="off"><button class="photo" id="photoBtn" title="Escolher foto">▧</button><button class="send" id="sendBtn" aria-label="Enviar">➤</button><input id="photoInput" type="file" accept="image/*" capture="environment" class="hidden"></div></div>
 
 <div id="settingsModal" class="modal hidden"><div class="modalbox">
- <div class="modalhead"><h2>Voz da Zia</h2><button class="smallbtn" data-close="settingsModal">Fechar ✕</button></div>
- <label class="fieldlabel">Modo de fala automática</label>
+ <div class="modalhead"><h2>Menu da Zia</h2><button class="smallbtn" data-close="settingsModal">Fechar ✕</button></div>
+ <p class="muted">Controles reunidos no mascote: áudio, microfone e salvamento dos seus dados.</p>
+ <div class="card" style="margin:10px 0;padding:12px">
+  <div class="sectionhead"><div><strong>Microfone</strong><div class="muted" id="micStatusLabel">Ativado</div></div><button class="secondary" id="micToggleBtn" type="button">Desativar</button></div>
+  <button class="primary" id="startMicFromMascot" type="button" style="width:100%">🎙 Falar com a Zia</button>
+ </div>
+ <button class="primary" id="backupFromMascot" type="button" style="width:100%;margin-bottom:8px">↥ Salvar dados e baixar backup</button>
+ <label class="fieldlabel">Modo de áudio da Zia</label>
  <select class="field" id="speechMode"><option value="all">Falar respostas e avisos</option><option value="important">Só avisos importantes</option><option value="off">Modo silencioso</option></select>
  <label class="fieldlabel">Voz disponível neste navegador</label><select class="field" id="voiceSelect"></select>
  <div class="row"><button class="secondary" id="refreshVoices">Atualizar vozes</button><button class="primary" id="testVoice">Testar voz</button></div>
@@ -555,13 +567,13 @@ const defaults=[
 {id:'sweep',title:'Varrer e passar pano',time:'Quando houver disponibilidade',kind:'Oportunidade',group:'flex'},
 {id:'stock_weekly',title:'Conferir o estoque (pelo menos uma vez na semana)',time:'Semanal',kind:'Periódica',group:'flex',weekly:true}
 ];
-function fresh(){return {customTasks:[],materials:initialMaterials.map(x=>({...x})),history:[],completions:{},movements:[],appointments:[],routineOverrides:{},hiddenTasks:{},taskOrder:{},dayNotes:{},weeklyCompletions:{},shiftStates:{},dayExceptions:{},settings:{speechMode:'all',voiceURI:'',rate:.92,pitch:1.08}}}
+function fresh(){return {customTasks:[],materials:initialMaterials.map(x=>({...x})),history:[],completions:{},movements:[],appointments:[],routineOverrides:{},hiddenTasks:{},taskOrder:{},dayNotes:{},weeklyCompletions:{},shiftStates:{},dayExceptions:{},settings:{speechMode:'all',voiceURI:'',rate:.92,pitch:1.08,microphoneEnabled:true}}}
 let db;try{db=JSON.parse(localStorage.getItem('ziaDB'))||fresh()}catch(e){db=fresh()}
 for(const k of ['customTasks','materials','history','completions','movements','appointments','routineOverrides','hiddenTasks','taskOrder','dayNotes','weeklyCompletions','shiftStates','dayExceptions'])db[k]??=(k==='materials'?initialMaterials.map(x=>({...x})):['appointments','customTasks','history','movements'].includes(k)?[]:{});
 db.pendingTasks??=[];
 db.carryoverTasks??={};
 db.shiftStates??={};db.dayExceptions??={};
-db.settings??={speechMode:'all',voiceURI:'',rate:.92,pitch:1.08};
+db.settings??={speechMode:'all',voiceURI:'',rate:.92,pitch:1.08,microphoneEnabled:true};db.settings.microphoneEnabled??=true;
 let currentImage=null,availableVoices=[];
 function save(){localStorage.setItem('ziaDB',JSON.stringify(db))}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -694,7 +706,18 @@ function renderTasks(){
  document.querySelector('.petwrap').classList.toggle('hidden',resting);
  if(resting){
   $('shiftPanel').innerHTML='';$('legacyHome').classList.add('hidden');
-  $('restScreen').innerHTML=`<div class="eyebrow">Expediente encerrado</div><h2>${new Date().getHours()>=20?'Boa noite':'Bom descanso'} 🌙</h2><p>Você fez a sua parte por hoje. Descanse. Amanhã continuamos com calma. 🌿</p>`;
+  $('restScreen').innerHTML=`<svg class="rest-mascot" viewBox="0 0 120 120" role="img" aria-label="Zia dormindo">
+   <defs><linearGradient id="sleepgrad" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dce9d4"/><stop offset="1" stop-color="#a9c7a2"/></linearGradient></defs>
+   <g class="sleep-body">
+    <path d="M48 23 Q31 5 24 17 Q36 16 40 31" fill="#71996d"/><path d="M55 25 Q59 5 76 12 Q68 26 59 31" fill="#93b987"/>
+    <ellipse cx="55" cy="63" rx="37" ry="37" fill="url(#sleepgrad)" stroke="#789a74" stroke-width="2"/>
+    <path d="M37 59 Q43 65 49 59 M62 59 Q68 65 74 59" fill="none" stroke="#455b43" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="32" cy="69" rx="7" ry="4" fill="#e8a8a0" opacity=".85"/><ellipse cx="78" cy="69" rx="7" ry="4" fill="#e8a8a0" opacity=".85"/>
+    <path d="M49 76 Q55 80 61 76" fill="none" stroke="#526d4e" stroke-width="2" stroke-linecap="round"/>
+   </g>
+   <g class="sleep-z" fill="#8da98a" font-family="system-ui,sans-serif" font-weight="700"><text x="91" y="35" font-size="17">z</text><text x="103" y="20" font-size="12">z</text></g>
+   <path d="M15 91 Q55 105 96 91" fill="none" stroke="#d9dfd2" stroke-width="4" stroke-linecap="round"/>
+  </svg><div class="eyebrow">Expediente encerrado</div><h2>${new Date().getHours()>=20?'Boa noite':'Bom descanso'} 🌙</h2><p>Você fez a sua parte por hoje. Descanse. Amanhã continuamos com calma. 🌿</p>`;
   return;
  }
  document.querySelector('.nav').classList.remove('hidden');document.querySelector('.composer').classList.remove('hidden');
@@ -911,21 +934,25 @@ document.querySelectorAll('[data-command]').forEach(b=>b.onclick=()=>command(b.d
 $('addTaskBtn').onclick=()=>addTask('main');$('addFlexibleBtn').onclick=()=>addTask('flex');$('editRoutineBtn').onclick=editRoutine;$('addAppointmentBtn').onclick=addAppointment;
 $('saveNoteBtn').onclick=()=>{db.dayNotes[dayKey()]=$('dayNote').value.trim();save();log('Ocorrência de hoje atualizada.');reply('Salvei a ocorrência somente para hoje.')};
 $('addMaterialBtn').onclick=()=>{let name=prompt('Nome do material:');if(!name?.trim())return;let raw=prompt('Quantidade inicial:','0');if(raw===null||raw.trim()===''||!Number.isFinite(Number(raw))||Number(raw)<0)return alert('Informe uma quantidade válida.');let qty=Number(raw);db.materials.push({id:'mat_'+Date.now(),name:name.trim(),qty,certainty:'Saldo informado manualmente',unit:'unidades'});save();log(`Material cadastrado: ${name}, saldo ${qty}.`);renderStock()};
-async function backup(){let photos=[];try{photos=await getAllEvidence()}catch(e){}let blob=new Blob([JSON.stringify({app:'zia',version:7,exportedAt:new Date().toISOString(),data:db,evidence:photos},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='zia-backup-'+dayKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);log('Backup exportado, incluindo as fotos de evidência disponíveis.')}
-$('backupBtn').onclick=backup;$('exportBtn').onclick=backup;
-$('micBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return reply('O reconhecimento de voz não está disponível neste navegador. Tente Chrome no Android ou digite.');let rec=new SR();rec.lang='pt-BR';rec.interimResults=false;$('micBtn').classList.add('listening');rec.onresult=e=>command(e.results[0][0].transcript);rec.onerror=()=>reply('Não consegui acessar o microfone ou entender. Tente novamente ou digite.');rec.onend=()=>$('micBtn').classList.remove('listening');try{rec.start()}catch(e){$('micBtn').classList.remove('listening');reply('Não consegui iniciar o microfone.')}};
+async function backup(){let photos=[];try{photos=await getAllEvidence()}catch(e){}let blob=new Blob([JSON.stringify({app:'zia',version:8,exportedAt:new Date().toISOString(),data:db,evidence:photos},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='zia-backup-'+dayKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);log('Backup exportado, incluindo as fotos de evidência disponíveis.')}
+$('exportBtn').onclick=backup;
+function updateMicMenu(){const enabled=db.settings.microphoneEnabled!==false;$('micStatusLabel').textContent=enabled?'Ativado':'Desativado';$('micToggleBtn').textContent=enabled?'Desativar':'Ativar';$('startMicFromMascot').disabled=!enabled;$('startMicFromMascot').style.opacity=enabled?'1':'.45'}
+function startMicrophone(){if(db.settings.microphoneEnabled===false){reply('O microfone está desativado. Ative-o no meu menu para falar comigo.');return}const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return reply('O reconhecimento de voz não está disponível neste navegador. Você pode digitar seu comando.');let rec=new SR();rec.lang='pt-BR';rec.interimResults=false;rec.onresult=e=>command(e.results[0][0].transcript);rec.onerror=()=>reply('Não consegui acessar o microfone ou entender. Confira a permissão do Chrome e tente novamente.');try{rec.start()}catch(e){reply('Não consegui iniciar o microfone.')}}
+$('micToggleBtn').onclick=()=>{db.settings.microphoneEnabled=db.settings.microphoneEnabled===false;save();updateMicMenu();reply(db.settings.microphoneEnabled?'Microfone ativado.':'Microfone desativado.');};
+$('startMicFromMascot').onclick=startMicrophone;
+$('backupFromMascot').onclick=backup;
 function loadVoices(){if(!('speechSynthesis'in window))return;availableVoices=speechSynthesis.getVoices();let list=$('voiceSelect');list.innerHTML='';if(!availableVoices.length){list.innerHTML='<option value="">Nenhuma voz disponível ainda</option>';return}
  availableVoices.sort((a,b)=>{let as=(/pt-BR/i.test(a.lang)?100:0)+(/male|masculino|daniel|lucas|felipe|antonio|ricardo/i.test(a.name)?20:0),bs=(/pt-BR/i.test(b.lang)?100:0)+(/male|masculino|daniel|lucas|felipe|antonio|ricardo/i.test(b.name)?20:0);return bs-as});
  availableVoices.forEach(v=>{let o=document.createElement('option');o.value=v.voiceURI;o.textContent=`${v.name} — ${v.lang}${v.default?' (padrão)':''}`;list.append(o)});list.value=db.settings.voiceURI||availableVoices.find(v=>/pt-BR/i.test(v.lang))?.voiceURI||availableVoices[0]?.voiceURI||''
 }
-function openSettings(){ $('settingsModal').classList.remove('hidden');$('speechMode').value=db.settings.speechMode;$('voiceRate').value=db.settings.rate;$('voicePitch').value=db.settings.pitch;$('rateLabel').textContent=Number(db.settings.rate).toLocaleString('pt-BR');$('pitchLabel').textContent=Number(db.settings.pitch).toLocaleString('pt-BR');loadVoices()}
-$('voiceBtn').onclick=openSettings;$('refreshVoices').onclick=loadVoices;
+function openSettings(){ $('settingsModal').classList.remove('hidden');updateMicMenu();$('speechMode').value=db.settings.speechMode;$('voiceRate').value=db.settings.rate;$('voicePitch').value=db.settings.pitch;$('rateLabel').textContent=Number(db.settings.rate).toLocaleString('pt-BR');$('pitchLabel').textContent=Number(db.settings.pitch).toLocaleString('pt-BR');loadVoices()}
+$('refreshVoices').onclick=loadVoices;
 if('speechSynthesis'in window)speechSynthesis.onvoiceschanged=loadVoices;
 $('voiceRate').oninput=e=>$('rateLabel').textContent=Number(e.target.value).toLocaleString('pt-BR');$('voicePitch').oninput=e=>$('pitchLabel').textContent=Number(e.target.value).toLocaleString('pt-BR');
 $('testVoice').onclick=()=>{db.settings.speechMode='all';db.settings.voiceURI=$('voiceSelect').value;db.settings.rate=Number($('voiceRate').value);db.settings.pitch=Number($('voicePitch').value);save();speak('Oi! Eu sou a Zia. Vamos deixar nosso dia mais leve e organizado?');};
 $('saveVoice').onclick=()=>{db.settings.speechMode=$('speechMode').value;db.settings.voiceURI=$('voiceSelect').value;db.settings.rate=Number($('voiceRate').value);db.settings.pitch=Number($('voicePitch').value);save();$('settingsModal').classList.add('hidden');reply(db.settings.speechMode==='off'?'Modo silencioso ativado. Continuo funcionando por texto e pelo microfone.':'Preferências de voz salvas.');};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=() => $(b.dataset.close).classList.add('hidden'));
-$('petButton').onclick=()=>{openSettings();showPet('Estou aqui! Você pode ajustar minha voz e minhas opções por esta janela. 🌱')};$('petBubbleClose').onclick=hidePetBubble;
+$('petButton').onclick=()=>{hidePetBubble();openSettings()};$('petBubbleClose').onclick=hidePetBubble;
 $('photoBtn').onclick=()=>$('photoInput').click();$('chooseAgain').onclick=()=>$('photoInput').click();
 $('evidenceInput').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!f.type.startsWith('image/'))return alert('Escolha uma imagem.');evidenceFile=f;$('evidencePreview').src=URL.createObjectURL(f);$('evidencePreview').classList.remove('hidden')};
 $('saveEvidence').onclick=saveEvidencePhoto;
