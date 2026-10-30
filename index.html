@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#eeece6">
 <title>Zia — sua assistente</title>
 <style>
-:root{--bg:#f6f5f1;--card:#fff;--ink:#302f2b;--muted:#77766f;--line:#e6e3dc;--green:#536b58;--red:#a44f48;--accent:#e8e5dc;--greeting:#eae8e0;--soft:#f0eee8}
+:root{--bg:#f6f5f1;--card:#fff;--ink:#302f2b;--muted:#77766f;--line:#e6e3dc;--green:#536b58;--red:#a44f48;--accent:#e8e5dc;--greeting:#eae8e0;--soft:#f0eee8;--control:#fff;--control-text:#302f2b;--composer:#f6f5f1ee;--bubble:#eeece5}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;transition:background .7s ease,color .7s ease}
 button,input,textarea,select{font:inherit}
@@ -16,7 +16,7 @@ button{border:0;cursor:pointer;color:inherit}
 header{display:flex;align-items:center;gap:10px;padding:6px 0 16px}
 .brand{flex:1}.brand h1{font-size:25px;margin:0;font-weight:700}
 .sub,.muted,.taskmeta{color:var(--muted);font-size:13px}
-.iconbtn{width:42px;height:42px;border-radius:14px;background:white;border:1px solid var(--line)}
+.iconbtn{width:42px;height:42px;border-radius:14px;background:var(--control);color:var(--control-text);border:1px solid var(--line)}
 h2{font-size:19px;margin:0 0 12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:15px;margin-bottom:13px}
 .greeting{display:flex;gap:14px;align-items:center;padding:17px;border-radius:22px;background:var(--greeting);margin-bottom:14px;transition:background .7s ease}
@@ -31,15 +31,15 @@ h2{font-size:19px;margin:0 0 12px}
 .sectionhead h2{margin:0}
 .smallbtn,.mini{background:#f0eee8;border-radius:10px;padding:8px 9px;font-size:12px}
 .row{display:flex;gap:8px;align-items:center;margin:8px 0}
-.row input,.row select{min-width:0;flex:1;padding:11px;border:1px solid var(--line);border-radius:12px;background:white}
+.row input,.row select{min-width:0;flex:1;padding:11px;border:1px solid var(--line);border-radius:12px;background:var(--control);color:var(--control-text)}
 .primary,.secondary{border-radius:12px;padding:11px 13px}
 .primary{background:#44443e;color:white}.secondary{background:#efede6}
-.field{width:100%;padding:11px;border:1px solid var(--line);border-radius:12px;background:white}
+.field{width:100%;padding:11px;border:1px solid var(--line);border-radius:12px;background:var(--control);color:var(--control-text)}
 .fieldlabel{display:block;font-size:12px;color:var(--muted);margin:10px 0 5px}
 .task{display:flex;gap:7px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
 .task:last-child{border-bottom:0;padding-bottom:0}.task:first-child{padding-top:0}
 .taskmain{flex:1;min-width:0}.tasktitle{font-weight:600;overflow-wrap:anywhere}
-.check{width:25px;height:25px;flex:0 0 25px;border-radius:9px;border:1.5px solid #bcb9af;background:white}
+.check{width:25px;height:25px;flex:0 0 25px;border-radius:9px;border:1.5px solid #bcb9af;background:var(--control);color:var(--control-text)}
 .check.done{background:var(--green);color:white}
 .draghandle{background:#f0eee8;border-radius:8px;padding:5px 8px;touch-action:none;cursor:grab}
 .tasktools{display:flex;gap:4px;align-items:center}
@@ -49,13 +49,13 @@ h2{font-size:19px;margin:0 0 12px}
 .stockrow{display:flex;align-items:center;gap:9px;padding:12px 0;border-bottom:1px solid var(--line)}
 .stockname{flex:1;font-weight:600;min-width:0}.stocknum{font-size:19px;font-weight:650}
 .stockunit{font-size:12px;color:var(--muted)}
-.composer{position:fixed;bottom:0;left:0;right:0;background:#f6f5f1ee;backdrop-filter:blur(12px);padding:9px 10px calc(9px + env(safe-area-inset-bottom));border-top:1px solid var(--line);z-index:3}
+.composer{position:fixed;bottom:0;left:0;right:0;background:var(--composer);backdrop-filter:blur(12px);padding:9px 10px calc(9px + env(safe-area-inset-bottom));border-top:1px solid var(--line);z-index:3}
 .composeinner{max-width:728px;margin:auto;display:flex;gap:6px;align-items:center}
-.composeinner input{flex:1;min-width:0;border:1px solid var(--line);border-radius:14px;background:white;padding:12px}
+.composeinner input{flex:1;min-width:0;border:1px solid var(--line);border-radius:14px;background:var(--control);color:var(--control-text);padding:12px}
 .send,.mic,.photo{height:43px;width:43px;flex:0 0 43px;border-radius:14px;background:#e8e5dc}
 .mic.listening{background:#f5dcd8}.photo{background:#e6e9e1}
 .chatline{display:flex;margin:10px 0}.chatline.user{justify-content:flex-end}
-.bubble{background:#eeece5;padding:11px 13px;border-radius:15px;max-width:90%;white-space:pre-wrap}
+.bubble{background:var(--bubble);color:var(--ink);padding:11px 13px;border-radius:15px;max-width:90%;white-space:pre-wrap}
 .user .bubble{background:#e1e7df}
 .footerhint{text-align:center;font-size:11px;color:var(--muted);margin:18px 0}
 .modal{position:fixed;inset:0;background:#25251f88;display:flex;align-items:flex-end;justify-content:center;z-index:10;padding:10px}
@@ -70,7 +70,7 @@ h2{font-size:19px;margin:0 0 12px}
 @keyframes jump{50%{transform:translateY(-14px) scale(1.08)}}
 .petwrap{position:fixed;right:13px;bottom:88px;z-index:2;display:flex;align-items:flex-end;gap:7px;pointer-events:none}
 .petwrap>*{pointer-events:auto}
-.petbubble{background:white;border:1px solid var(--line);border-radius:15px 15px 3px 15px;padding:9px 11px;font-size:12px;max-width:185px;box-shadow:0 3px 15px #0001}
+.petbubble{background:var(--control);color:var(--control-text);border:1px solid var(--line);border-radius:15px 15px 3px 15px;padding:9px 11px;font-size:12px;max-width:185px;box-shadow:0 3px 15px #0001}
 @media(max-width:420px){.task{gap:5px}.tasktools{gap:2px}.mini{padding:6px}.greeting{gap:8px}}
 
 /* ===== CALENDÁRIO SEMANAL DA ZIA ===== */
@@ -228,14 +228,41 @@ h2{font-size:19px;margin:0 0 12px}
 body[data-period="morning"]{--bg:#f7f5ed;--card:#fffefa;--accent:#eee9d8;--greeting:#f0eadb;--soft:#f3f0e6}
 body[data-period="lunch"]{--bg:#f0f1ed;--card:#fff;--accent:#e4e9e2;--greeting:#e5ebe4;--soft:#edf0eb}
 body[data-period="afternoon"]{--bg:#f4f1eb;--card:#fffdfa;--accent:#e9e3d8;--greeting:#eee5d9;--soft:#f2eee7}
-body[data-period="night"]{--bg:#252c32;--card:#303940;--ink:#f1f0e9;--muted:#c0c4c1;--line:#465057;--accent:#414d54;--greeting:#35434a;--soft:#414c52;--green:#9dbb9b;color-scheme:dark}
+body[data-period="night"]{--bg:#20272d;--card:#2d363d;--ink:#f1f3ef;--muted:#b9c1c2;--line:#465159;--accent:#3d4a51;--greeting:#344149;--soft:#3a464d;--control:#303a41;--control-text:#f1f3ef;--composer:#20272df2;--bubble:#3b474e;--green:#9dbb9b;color-scheme:dark}
+body[data-period="night"] button{color:var(--ink)}
+body[data-period="night"] .iconbtn,body[data-period="night"] .smallbtn,body[data-period="night"] .mini,body[data-period="night"] .secondary,body[data-period="night"] .send,body[data-period="night"] .mic,body[data-period="night"] .photo{background:#3a464e!important;color:#f2f4f0!important;border-color:#53616a!important}
+body[data-period="night"] .primary{background:#647d6b;color:#fff;border:1px solid #829b89}
+body[data-period="night"] .secondary,body[data-period="night"] .smallbtn,body[data-period="night"] .mini,body[data-period="night"] .iconbtn,body[data-period="night"] .draghandle,body[data-period="night"] .taskmenu summary,body[data-period="night"] .send,body[data-period="night"] .mic,body[data-period="night"] .photo{background:#3a464e!important;color:#f2f4f0!important;border:1px solid #53616a}
+body[data-period="night"] .check{background:#303a41;color:#f1f3ef;border-color:#718087}
+body[data-period="night"] .check.done{background:#78977e;color:#fff}
 body[data-period="night"] .field,body[data-period="night"] input,body[data-period="night"] select,body[data-period="night"] textarea{background:#263138;color:#f1f0e9;border-color:#526068}
-body[data-period="night"] .notice,body[data-period="night"] .bubble{background:#414b50;color:#f1f0e9}
-body[data-period="night"] .composer{background:#252c32ee;border-color:#465057}
-body[data-period="night"] .daynav-day{background:#3b454b;color:#f1f0e9}
+body[data-period="night"] .notice,body[data-period="night"] .bubble,body[data-period="night"] .petbubble{background:#3b474e;color:#f1f3ef}
+body[data-period="night"] .composer{background:var(--composer);border-color:#465057}
+body[data-period="night"] .daynav-day{background:#3b454b;color:#f1f0e9;border-color:#526068}
 body[data-period="night"] .daynav-day.active{background:#52675b;color:#fff}
+body[data-period="night"] .pill{background:#3b5141;color:#c9e2c8}
+body[data-period="night"] .taskmenuitems{background:#2d363d;border-color:#53616a}
+body[data-period="night"] .taskmenuitems button{background:#3a464e;color:#f2f4f0}
 @media(max-width:390px){.shift-controls{grid-template-columns:1fr}.stockrow{gap:6px}.stockname{font-size:13px}.stock-actions button{min-width:28px}}
 
+
+.shift-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px;text-align:center}
+.shift-status{font-size:14px;color:var(--muted);margin-bottom:10px}
+.shift-main-action{width:100%;min-height:48px;font-weight:700}
+.agenda-adjust{margin:6px 0 12px;color:var(--muted);font-size:12px}
+.agenda-adjust summary{cursor:pointer;padding:8px 2px}
+.agenda-adjust .exception-actions{display:flex;flex-wrap:wrap;gap:6px;padding:6px 0}
+#legacyHome .card{margin-bottom:12px}
+.taskmenu{position:relative;flex:0 0 auto}
+.taskmenu summary{list-style:none;cursor:pointer;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--soft);color:var(--ink);font-size:20px}
+.taskmenu summary::-webkit-details-marker{display:none}
+.taskmenuitems{display:none;position:absolute;right:0;top:38px;z-index:8;min-width:160px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 5px 20px #0002;gap:4px}
+.taskmenu[open] .taskmenuitems{display:grid}
+.taskmenuitems button{width:100%;text-align:left;padding:9px 10px;border-radius:8px;background:var(--soft);font-size:13px;color:var(--ink)}
+.rest-screen{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:25px 18px;text-align:center;margin:12px 0}
+.rest-screen h2{font-size:25px;margin:5px 0 8px}.rest-screen p{color:var(--muted);margin:0}
+.petbubble{cursor:pointer;border:1px solid var(--line);font:inherit;text-align:left}
+@media(max-width:420px){.task{gap:6px}.tasktitle{line-height:1.35}.taskmenuitems{min-width:148px}}
 </style>
 </head>
 <body>
@@ -391,7 +418,7 @@ body[data-period="night"] .daynav-day.active{background:#52675b;color:#fff}
 <p class="footerhint">Zia · Dados guardados neste navegador. Faça backups e não registre dados identificáveis de pacientes.</p>
 </div>
 
-<div class="petwrap"><div id="petBubble" class="petbubble">Oi! Toque em mim quando precisar. 🌱</div></div>
+<div class="petwrap"><button id="petBubbleClose" class="petbubble" aria-label="Fechar mensagem da Zia">Oi! Toque em mim quando precisar. 🌱　×</button></div>
 <div class="composer"><div class="composeinner"><input id="commandInput" placeholder="Digite um comando para a Zia…" autocomplete="off"><button class="photo" id="photoBtn" title="Escolher foto">▧</button><button class="mic" id="micBtn" title="Falar">🎙</button><button class="send" id="sendBtn" aria-label="Enviar">➤</button><input id="photoInput" type="file" accept="image/*" capture="environment" class="hidden"></div></div>
 
 <div id="settingsModal" class="modal hidden"><div class="modalbox">
@@ -553,35 +580,22 @@ function taskShift(t){
 function shiftState(k=dayKey()){db.shiftStates[k]??={morning:false,afternoon:false,morningEnded:false,afternoonEnded:false};return db.shiftStates[k]}
 function dayException(k=dayKey()){db.dayExceptions[k]??={type:'',note:''};return db.dayExceptions[k]}
 function renderShiftPanel(){
- const st=shiftState(),ex=dayException(),morningDone=st.morningEnded,afternoonDone=st.afternoonEnded;
- $('shiftPanel').innerHTML=`
- <div class="shift-controls">
-  <div class="shift-card">
-   <strong>☀️ Turno da manhã</strong>
-   <div class="shift-status">${morningDone?'Turno encerrado':st.morning?'Em andamento':'Ainda não iniciado'}</div>
-   <div class="shift-actions">
-    <button class="primary ${st.morning?'started':''}" data-shift-start="morning" ${morningDone?'disabled':''}>${st.morning?'Turno iniciado':'Iniciar manhã'}</button>
-    <button class="secondary" data-shift-end="morning" ${!st.morning||morningDone?'disabled':''}>Encerrar</button>
-   </div>
-  </div>
-  <div class="shift-card">
-   <strong>🌤️ Turno da tarde</strong>
-   <div class="shift-status">${afternoonDone?'Turno encerrado':st.afternoon?'Em andamento':'Ainda não iniciado'}</div>
-   <div class="shift-actions">
-    <button class="primary ${st.afternoon?'started':''}" data-shift-start="afternoon" ${afternoonDone?'disabled':''}>${st.afternoon?'Turno iniciado':'Iniciar tarde'}</button>
-    <button class="secondary" data-shift-end="afternoon" ${!st.afternoon||afternoonDone?'disabled':''}>Encerrar</button>
-   </div>
-  </div>
- </div>
- <div class="card" style="margin-top:10px">
-  <div class="sectionhead"><strong> Ajustar agenda de hoje</strong><span class="eyebrow">${ex.type==='cancelled'?'Tarde liberada':ex.type==='extra'?'Demanda extra':'Sem exceções'}</span></div>
-  <div class="exception-actions">
-   <button class="secondary" data-exception="cancelled">Profissional desmarcou</button>
-   <button class="secondary" data-exception="extra">Atendimento extra</button>
-   <button class="smallbtn" data-exception="clear">Limpar ajuste</button>
-  </div>
-  <div class="exception-note">${ex.type==='cancelled'?'A tarde foi liberada. As tarefas flexíveis podem ser distribuídas ao longo do dia.':ex.type==='extra'?'A tarde está reservada para demanda extra. Priorize as tarefas flexíveis pela manhã.':'Use estes ajustes apenas quando a agenda fugir do padrão.'}</div>
- </div>`;
+ const st=shiftState(),h=new Date().getHours(),isToday=dayKey()===realTodayKey();
+ const period=updateDayTheme();
+ if(isToday&&period==='night'){$('shiftPanel').innerHTML='';return}
+ let type=new Date().getHours()<12?'morning':'afternoon';
+ if(st.morning&&!st.morningEnded)type='morning';
+ else if(st.afternoon&&!st.afternoonEnded)type='afternoon';
+ else if(st.morningEnded)type='afternoon';
+ const ended=st[type+'Ended'],started=st[type];
+ const label=type==='morning'?'manhã':'tarde',emoji=type==='morning'?'☀️':'🌤️';
+ if(!started||ended){
+  $('shiftPanel').innerHTML=`<div class="shift-card shift-start-card"><div class="shift-status">${emoji} Seu turno da ${label} está pronto</div><button class="primary shift-main-action" data-shift-start="${type}" ${ended?'disabled':''}>Iniciar turno da ${label}</button></div>`;
+ }else{
+  const ex=dayException();
+  $('shiftPanel').innerHTML=`<div class="shift-card shift-active-card"><div class="shift-status">${emoji} Turno da ${label} em andamento</div><button class="primary shift-main-action" data-shift-end="${type}">Encerrar turno da ${label}</button></div>
+  <details class="agenda-adjust"><summary>Ajustar agenda de hoje</summary><div class="exception-actions"><button class="secondary" data-exception="cancelled">Profissional desmarcou</button><button class="secondary" data-exception="extra">Atendimento extra</button><button class="smallbtn" data-exception="clear">Limpar ajuste</button></div><div class="exception-note">${ex.type==='cancelled'?'Tarde liberada.':ex.type==='extra'?'Demanda extra à tarde.':'Ajustes excepcionais da agenda.'}</div></details>`;
+ }
 }
 function setShift(type,action){
  const st=shiftState(),label=type==='morning'?'manhã':'tarde';
@@ -589,7 +603,7 @@ function setShift(type,action){
   st[type]=true;st[type+'Ended']=false;
   log(`Turno da ${label} iniciado.`);
  }else{
-  const k=dayKey(),tomorrow=nextDateKey(k),tasks=todaysTasks().filter(t=>taskShift(t)===type&&!t.done&&!t.weekly);
+  const k=dayKey(),tomorrow=nextDateKey(k),tasks=todaysTasks().filter(t=>(taskShift(t)===type||t.group==='flex')&&!t.done&&!t.weekly);
   db.carryoverTasks[tomorrow]??=[];
   for(const t of tasks){
    db.carryoverTasks[tomorrow]=db.carryoverTasks[tomorrow].filter(x=>!(x.sourceDate===k&&x.sourceId===t.id));
@@ -651,7 +665,7 @@ async function renderEvidence(){
 }
 
 function todaysTasks(){
- let d=dateObj().getDay(),k=dayKey(),base=[];
+ let d=dateObj(dayKey()).getDay(),k=dayKey(),base=[];
  if(d!==0&&d!==6)base=defaults.filter(t=>!t.weekly);
  if(d===6){let role=saturdayRole(k);if(role&&role!=='Folga'&&role!=='Antes da escala definida')base=[{id:'saturday_'+role,title:'Rotina de sábado: '+role,time:'Conforme a escala',kind:'Escala',group:'main'},...defaults.filter(t=>['temp','closing'].includes(t.id))]}
  base=base.filter(t=>!(db.hiddenTasks[k]||[]).includes(t.id)).map(t=>({...t,...(db.routineOverrides[t.id]||{})}));
@@ -668,39 +682,60 @@ function taskHtml(t){return `<div class="task" data-task="${esc(t.id)}" data-gro
 <div class="taskmain"><div class="tasktitle" style="${t.done?'text-decoration:line-through;color:#777':''}">${esc(t.title)}</div><div class="taskmeta">${esc(t.time||'Sem horário')} · ${esc(t.kind||'Adicional')}</div>${t.done?'<span class="pill">Concluída</span>':''}</div>
 <details class="taskmenu"><summary aria-label="Ações da tarefa">⋮</summary><div class="taskmenuitems"><button data-move-task="${esc(t.id)}" data-delta="-1">↑ Mover para cima</button><button data-move-task="${esc(t.id)}" data-delta="1">↓ Mover para baixo</button><button data-photo-task="${esc(t.id)}">▧ Anexar foto</button><button data-edit-task="${esc(t.id)}">✎ Editar</button><button data-delete-task="${esc(t.id)}">× Excluir</button></div></details></div>`}
 function renderTasks(){
- renderCalendar();renderShiftPanel();updateDayTheme();
+ renderCalendar();updateDayTheme();
+ const selectedKey=dayKey(),isToday=selectedKey===realTodayKey(),period=updateDayTheme(),st=shiftState();
  $('todayLabel').textContent=selectedDate.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
- const allTasks=todaysTasks(),st=shiftState();
- const ts=allTasks.filter(t=>!(st[taskShift(t)+'Ended']&&t.done));
- const done=allTasks.filter(t=>t.done).length;
+ const resting=isToday&&(period==='night'||st.afternoonEnded);
+ $('restScreen').classList.toggle('hidden',!resting);
+ document.querySelector('.greeting').classList.toggle('hidden',resting);
+ document.querySelector('.nav').classList.toggle('hidden',resting);
+ document.querySelector('.composer').classList.toggle('hidden',resting);
+ $('chatArea').classList.toggle('hidden',resting);
+ document.querySelector('.petwrap').classList.toggle('hidden',resting);
+ if(resting){
+  $('shiftPanel').innerHTML='';$('legacyHome').classList.add('hidden');
+  $('restScreen').innerHTML=`<div class="eyebrow">Expediente encerrado</div><h2>${new Date().getHours()>=20?'Boa noite':'Bom descanso'} 🌙</h2><p>Você fez a sua parte por hoje. Descanse. Amanhã continuamos com calma. 🌿</p>`;
+  return;
+ }
+ document.querySelector('.nav').classList.remove('hidden');document.querySelector('.composer').classList.remove('hidden');
+ $('restScreen').classList.add('hidden');
+ const viewingToday=isToday;
+ let activeShift=null;
+ if(st.morning&&!st.morningEnded)activeShift='morning';else if(st.afternoon&&!st.afternoonEnded)activeShift='afternoon';
+ const allTasks=todaysTasks();
+ const visibleTasks=allTasks.filter(t=>!(st[taskShift(t)+'Ended']&&t.done)&&!(t.group==='flex'&&(st.morningEnded||st.afternoonEnded)&&t.done));
+ const ts=activeShift?visibleTasks.filter(t=>taskShift(t)===activeShift||t.group==='flex'):[];
+ const done=ts.filter(t=>t.done).length;
  const apps=todayAppointments(),role=saturdayRole(),ex=dayException();
  const flex=ts.filter(t=>t.group==='flex');
  const prioritizeFlex=ex.type==='extra'||(apps.length>0&&ex.type!=='cancelled');
+ $('legacyHome').classList.toggle('hidden',!activeShift);
+ document.querySelector('.nav').classList.toggle('hidden',!activeShift);
+ renderShiftPanel();
+ $('planningCard').classList.toggle('hidden',!activeShift);
+ $('tasks').previousElementSibling.style.display=activeShift==='morning'?'block':'none';
+ $('tasks').style.display=activeShift==='morning'?'block':'none';
+ $('afternoonTasks').previousElementSibling.style.display=activeShift==='afternoon'?'block':'none';
+ $('afternoonTasks').style.display=activeShift==='afternoon'?'block':'none';
+ $('flexTasks').closest('.card').style.display=flex.length?'block':'none';
+ $('pendingTasks').closest('.card').style.display='none';
+ $('appointments').closest('.card').style.display=activeShift==='afternoon'?'block':'none';
+ $('dayNote').closest('.card').style.display='none';
  $('progress').textContent=`${done} de ${ts.length} concluídas`;
- const morning=ts.filter(t=>(t.group!=='flex'&&taskShift(t)==='morning')||(prioritizeFlex&&t.group==='flex'));
- const afternoon=ts.filter(t=>t.group!=='flex'&&taskShift(t)==='afternoon');
- $('tasks').innerHTML=morning.length?morning.map(taskHtml).join(''):'<div class="empty">Nenhuma tarefa da manhã.</div>';
- $('afternoonTasks').innerHTML=afternoon.length?afternoon.map(taskHtml).join(''):'<div class="empty">Nenhuma tarefa da tarde.</div>';
- $('flexTasks').innerHTML=prioritizeFlex?'<div class="empty">As tarefas flexíveis foram antecipadas para a manhã devido ao atendimento da tarde.</div>':(flex.length?flex.map(taskHtml).join(''):'<div class="empty">Nenhuma tarefa nesta seção.</div>');
+ const morning=activeShift==='morning'?ts.filter(t=>t.group!=='flex'):[];
+ const afternoon=activeShift==='afternoon'?ts.filter(t=>t.group!=='flex'):[];
+ $('tasks').innerHTML=morning.length?morning.map(taskHtml).join(''):'<div class="empty">Nenhuma atividade deste turno.</div>';
+ $('afternoonTasks').innerHTML=afternoon.length?afternoon.map(taskHtml).join(''):'<div class="empty">Nenhuma atividade deste turno.</div>';
+ $('flexTasks').innerHTML=activeShift&&flex.length?flex.map(taskHtml).join(''):'<div class="empty">Nenhuma tarefa flexível para este turno.</div>';
  let n=ts.find(t=>!t.done);
- $('nextTask').innerHTML=n?`<div class="tasktitle">${esc(n.title)}</div><div class="taskmeta">${esc(n.time)}</div><button class="primary" style="margin-top:10px" data-check="${esc(n.id)}">Concluir e avançar</button>`:'Tudo concluído por aqui. 🌱';
- $('planningCard').innerHTML=`<strong>${ex.type==='cancelled'?'Tarde liberada':ex.type==='extra'?'Atendimento extra':apps.length?'Atenção: tarde com atendimento':'Planejamento de hoje'}</strong><br>${ex.type==='cancelled'?'O profissional desmarcou. Distribua as tarefas flexíveis ao longo do dia.':ex.type==='extra'?'Há uma demanda extra à tarde. Priorize tarefas flexíveis pela manhã.':apps.length?`Há ${apps.length} atendimento(s) previsto(s) à tarde. Priorize clientes, coletas e tarefas obrigatórias. Se houver mais pessoas pela manhã, tente adiantar limpeza e estoque.`:'Prioridade: clientes, coletas e tarefas obrigatórias. Faça as tarefas flexíveis apenas quando houver disponibilidade.'}${role?`<br><br><strong>Escala de sábado:</strong> ${esc(role)}.`:''}`;
- $('appointments').innerHTML=apps.length?apps.map((a,i)=>`<div class="task"><div class="taskmain"><div class="tasktitle">${i+1}. ${esc(a.name)}</div><div class="taskmeta">${weekdays[a.day]} à tarde · ${a.frequency==='weekly'?'Toda semana':'A cada 15 dias'}${a.frequency==='biweekly'?' · início '+esc(a.startDate):''}</div></div><details class="taskmenu"><summary>⋮</summary><div class="taskmenuitems"><button data-move-appointment="${a.id}" data-delta="-1">↑ Subir na sequência</button><button data-move-appointment="${a.id}" data-delta="1">↓ Descer na sequência</button><button data-edit-appointment="${a.id}">✎ Editar</button><button data-delete-appointment="${a.id}">× Excluir</button></div></details></div>`).join(''):'<div class="empty">Nenhum profissional previsto para este dia. Cadastre um atendimento em ＋ Profissional.</div>';
- $('dayNote').value=db.dayNotes[dayKey()]||'';
- const isRealToday=dayKey()===realTodayKey(),period=updateDayTheme();
- const resting=isRealToday&&period==='night';
- $('restScreen').classList.toggle('hidden',!resting);
- $('legacyHome').classList.toggle('hidden',resting&&!window.ziaShowAgendaAfterHours);
- if(resting){
-  $('restScreen').innerHTML=`<div class="eyebrow">Expediente encerrado</div><h2>${new Date().getHours()>=20?'Boa noite':'Bom descanso'} 🌙</h2><p>Você fez a sua parte por hoje. Amanhã a gente continua, com calma e organização.</p><div class="rest-actions"><button class="secondary" id="showAgendaAfterHours">Consultar agenda</button><button class="primary" id="finishDayRest">Até amanhã</button></div>`;
-  $('showAgendaAfterHours').onclick=()=>{window.ziaShowAgendaAfterHours=true;$('legacyHome').classList.remove('hidden')};
-  $('finishDayRest').onclick=()=>reply('Até amanhã! Descanse e cuide de você. 🌙',true);
- }else{window.ziaShowAgendaAfterHours=false}
- const carriedToday=(db.carryoverTasks[dayKey()]||[]);
- const pendingTotal=db.pendingTasks.length+carriedToday.length;
+ $('nextTask').innerHTML=n?`<div class="tasktitle">${esc(n.title)}</div><div class="taskmeta">${esc(n.time)}</div><button class="primary" style="margin-top:10px" data-check="${esc(n.id)}">Concluir e avançar</button>`:activeShift?'Turno concluído por aqui. 🌱':'Inicie o turno para ver suas atividades.';
+ $('planningCard').innerHTML=activeShift?`<strong>${ex.type==='cancelled'?'Tarde liberada':ex.type==='extra'?'Atendimento extra':apps.length?'Atendimento previsto':'Planejamento do turno'}</strong><br>${ex.type==='cancelled'?'A tarde foi liberada.':ex.type==='extra'?'Há uma demanda extra à tarde.':apps.length?`Há ${apps.length} profissional(is) previsto(s) para hoje.`:'Priorize clientes, coletas e tarefas obrigatórias.'}${role?`<br><br><strong>Escala de sábado:</strong> ${esc(role)}.`:''}`:'';
+ $('appointments').innerHTML=apps.length?apps.map((a,i)=>`<div class="task"><div class="taskmain"><div class="tasktitle">${i+1}. ${esc(a.name)}</div><div class="taskmeta">${weekdays[a.day]} à tarde · ${a.frequency==='weekly'?'Toda semana':'A cada 15 dias'}${a.frequency==='biweekly'?' · início '+esc(a.startDate):''}</div></div><details class="taskmenu"><summary>⋮</summary><div class="taskmenuitems"><button data-move-appointment="${a.id}" data-delta="-1">↑ Subir na sequência</button><button data-move-appointment="${a.id}" data-delta="1">↓ Descer na sequência</button><button data-edit-appointment="${a.id}">✎ Editar</button><button data-delete-appointment="${a.id}">× Excluir</button></div></details></div>`).join(''):'<div class="empty">Nenhum profissional previsto para este dia.</div>';
+ $('dayNote').value=db.dayNotes[selectedKey]||'';
+ const carriedToday=db.carryoverTasks[selectedKey]||[],pendingTotal=db.pendingTasks.length+carriedToday.length;
  $('pendingCount').textContent=`${pendingTotal} ${pendingTotal===1?'tarefa':'tarefas'}`;
  $('pendingTasks').innerHTML=pendingTotal?[...carriedToday.map(t=>({title:t.title,note:`Veio de ${t.sourceDate} · ${t.shift==='morning'?'manhã':'tarde'}`})),...db.pendingTasks].map(t=>`<div class="task"><div class="taskmain"><div class="tasktitle">${esc(t.title)}</div><div class="taskmeta">${esc(t.note||'Adiada')}</div></div></div>`).join(''):'Nenhuma pendência por enquanto. 🌱';
- const hidden=(db.hiddenTasks[dayKey()]||[]);
+ const hidden=(db.hiddenTasks[selectedKey]||[]);
  $('hiddenTaskRestore').innerHTML=hidden.length?`Tarefas ocultadas: ${hidden.map(id=>{const t=defaults.find(x=>x.id===id);return t?`<button class="mini" data-restore-task="${esc(id)}">Restaurar ${esc(t.title)}</button>`:''}).join(' ')}`:'';
  bindDrag();renderEvidence();
 }
@@ -766,7 +801,7 @@ function renderStock(){
 }
 function renderHistory(){$('historyList').innerHTML=db.history.length?db.history.slice(0,150).map(h=>`<div class="task"><div class="taskmain">${esc(h.msg)}<div class="taskmeta">${new Date(h.at).toLocaleString('pt-BR')}</div></div></div>`).join(''):'<div class="empty">Ainda não há registros.</div>'}
 function render(){$('todayLabel').textContent=fmtDate().toUpperCase();renderTasks();renderStock();renderHistory()}
-function showPet(s){$('petBubble').textContent=s;$('pet').classList.remove('bounce');void $('pet').offsetWidth;$('pet').classList.add('bounce')}
+let petBubbleTimer=null;function hidePetBubble(){const b=$('petBubbleClose');if(b)b.classList.add('hidden')}function showPet(s){const b=$('petBubbleClose');b.textContent=s+'　×';b.classList.remove('hidden');clearTimeout(petBubbleTimer);petBubbleTimer=setTimeout(hidePetBubble,6500);$('pet').classList.remove('bounce');void $('pet').offsetWidth;$('pet').classList.add('bounce')}
 function speak(s,important=false){
  const cfg=db.settings;if(cfg.speechMode==='off'||(cfg.speechMode==='important'&&!important))return;
  if(!('speechSynthesis'in window))return;
@@ -779,6 +814,7 @@ function complete(id){
  let t=todaysTasks().find(x=>x.id===id);if(!t)return;
  if(t.weekly){db.weeklyCompletions[weekKey()]??={};db.weeklyCompletions[weekKey()][id]=!db.weeklyCompletions[weekKey()][id]}
  else{db.completions[dayKey()]??={};db.completions[dayKey()][id]=!db.completions[dayKey()][id]}
+ if(t.carryover&&db.completions[dayKey()][id])db.carryoverTasks[dayKey()]=(db.carryoverTasks[dayKey()]||[]).filter(x=>x.id!==id);
  save();
  const done=!!(t.weekly?weeklyDone(id):(db.completions[dayKey()]||{})[id]);
  log(`${done?'Concluída':'Reaberta'}: ${t.title}`);renderTasks();reply(done?`Boa! Mais uma resolvida: ${t.title}.`:`Tudo bem, reabri ${t.title}.`);
@@ -834,7 +870,7 @@ function command(raw){
  if(recv){let n=Number(recv[1]),term=recv[2].toLowerCase(),m=db.materials.find(m=>term.includes(m.name.toLowerCase())||m.name.toLowerCase().includes(term.replace(/s$/,'')));if(m){m.qty+=n;m.certainty='Saldo atualizado manualmente';save();log(`Saldo ajustado: ${m.name}, +${n}; total ${m.qty}.`);renderStock();reply(`Atualizei ${m.name}. Saldo: ${m.qty}.`)}else reply('Não identifiquei o material. Abra Estoque e selecione-o.');return}
  reply('Posso consultar tarefas e estoque, concluir tarefas ou adicionar um lembrete para hoje.')
 }
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['home','stock','history'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(document.body.dataset.period==='night'&&dayKey()===realTodayKey())return;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['home','stock','history'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});
 document.body.addEventListener('click',e=>{
   let day=e.target.closest('[data-calendar-date]');
 if(day){
@@ -875,7 +911,7 @@ document.querySelectorAll('[data-command]').forEach(b=>b.onclick=()=>command(b.d
 $('addTaskBtn').onclick=()=>addTask('main');$('addFlexibleBtn').onclick=()=>addTask('flex');$('editRoutineBtn').onclick=editRoutine;$('addAppointmentBtn').onclick=addAppointment;
 $('saveNoteBtn').onclick=()=>{db.dayNotes[dayKey()]=$('dayNote').value.trim();save();log('Ocorrência de hoje atualizada.');reply('Salvei a ocorrência somente para hoje.')};
 $('addMaterialBtn').onclick=()=>{let name=prompt('Nome do material:');if(!name?.trim())return;let raw=prompt('Quantidade inicial:','0');if(raw===null||raw.trim()===''||!Number.isFinite(Number(raw))||Number(raw)<0)return alert('Informe uma quantidade válida.');let qty=Number(raw);db.materials.push({id:'mat_'+Date.now(),name:name.trim(),qty,certainty:'Saldo informado manualmente',unit:'unidades'});save();log(`Material cadastrado: ${name}, saldo ${qty}.`);renderStock()};
-async function backup(){let photos=[];try{photos=await getAllEvidence()}catch(e){}let blob=new Blob([JSON.stringify({app:'zia',version:6,exportedAt:new Date().toISOString(),data:db,evidence:photos},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='zia-backup-'+dayKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);log('Backup exportado, incluindo as fotos de evidência disponíveis.')}
+async function backup(){let photos=[];try{photos=await getAllEvidence()}catch(e){}let blob=new Blob([JSON.stringify({app:'zia',version:7,exportedAt:new Date().toISOString(),data:db,evidence:photos},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='zia-backup-'+dayKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);log('Backup exportado, incluindo as fotos de evidência disponíveis.')}
 $('backupBtn').onclick=backup;$('exportBtn').onclick=backup;
 $('micBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return reply('O reconhecimento de voz não está disponível neste navegador. Tente Chrome no Android ou digite.');let rec=new SR();rec.lang='pt-BR';rec.interimResults=false;$('micBtn').classList.add('listening');rec.onresult=e=>command(e.results[0][0].transcript);rec.onerror=()=>reply('Não consegui acessar o microfone ou entender. Tente novamente ou digite.');rec.onend=()=>$('micBtn').classList.remove('listening');try{rec.start()}catch(e){$('micBtn').classList.remove('listening');reply('Não consegui iniciar o microfone.')}};
 function loadVoices(){if(!('speechSynthesis'in window))return;availableVoices=speechSynthesis.getVoices();let list=$('voiceSelect');list.innerHTML='';if(!availableVoices.length){list.innerHTML='<option value="">Nenhuma voz disponível ainda</option>';return}
@@ -889,7 +925,7 @@ $('voiceRate').oninput=e=>$('rateLabel').textContent=Number(e.target.value).toLo
 $('testVoice').onclick=()=>{db.settings.speechMode='all';db.settings.voiceURI=$('voiceSelect').value;db.settings.rate=Number($('voiceRate').value);db.settings.pitch=Number($('voicePitch').value);save();speak('Oi! Eu sou a Zia. Vamos deixar nosso dia mais leve e organizado?');};
 $('saveVoice').onclick=()=>{db.settings.speechMode=$('speechMode').value;db.settings.voiceURI=$('voiceSelect').value;db.settings.rate=Number($('voiceRate').value);db.settings.pitch=Number($('voicePitch').value);save();$('settingsModal').classList.add('hidden');reply(db.settings.speechMode==='off'?'Modo silencioso ativado. Continuo funcionando por texto e pelo microfone.':'Preferências de voz salvas.');};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=() => $(b.dataset.close).classList.add('hidden'));
-$('petButton').onclick=()=>{showPet('Opa! 🌱 Quer consultar tarefas, registrar algo ou conversar comigo?');speak('Opa! Quer consultar tarefas, registrar algo ou conversar comigo?')};
+$('petButton').onclick=()=>{openSettings();showPet('Estou aqui! Você pode ajustar minha voz e minhas opções por esta janela. 🌱')};$('petBubbleClose').onclick=hidePetBubble;
 $('photoBtn').onclick=()=>$('photoInput').click();$('chooseAgain').onclick=()=>$('photoInput').click();
 $('evidenceInput').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!f.type.startsWith('image/'))return alert('Escolha uma imagem.');evidenceFile=f;$('evidencePreview').src=URL.createObjectURL(f);$('evidencePreview').classList.remove('hidden')};
 $('saveEvidence').onclick=saveEvidencePhoto;
