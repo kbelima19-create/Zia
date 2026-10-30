@@ -7,9 +7,9 @@
 <meta name="theme-color" content="#eeece6">
 <title>Zia — sua assistente</title>
 <style>
-:root{--bg:#f6f5f1;--card:#fff;--ink:#302f2b;--muted:#77766f;--line:#e6e3dc;--green:#536b58;--red:#a44f48}
+:root{--bg:#f6f5f1;--card:#fff;--ink:#302f2b;--muted:#77766f;--line:#e6e3dc;--green:#536b58;--red:#a44f48;--accent:#e8e5dc;--greeting:#eae8e0;--soft:#f0eee8}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;transition:background .7s ease,color .7s ease}
 button,input,textarea,select{font:inherit}
 button{border:0;cursor:pointer;color:inherit}
 .app{max-width:760px;margin:auto;padding:16px 14px 115px}
@@ -19,12 +19,12 @@ header{display:flex;align-items:center;gap:10px;padding:6px 0 16px}
 .iconbtn{width:42px;height:42px;border-radius:14px;background:white;border:1px solid var(--line)}
 h2{font-size:19px;margin:0 0 12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:15px;margin-bottom:13px}
-.greeting{display:flex;gap:14px;align-items:center;padding:17px;border-radius:22px;background:#eae8e0;margin-bottom:14px}
+.greeting{display:flex;gap:14px;align-items:center;padding:17px;border-radius:22px;background:var(--greeting);margin-bottom:14px;transition:background .7s ease}
 .greeting h2{font-size:22px;margin:3px 0}.greeting p{margin:0;color:#5e5c55;font-size:13px}
 .eyebrow{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:700}
 .nav{display:flex;gap:7px;margin-bottom:15px}
 .nav button{flex:1;border-radius:12px;padding:11px 5px;background:transparent;color:var(--muted);font-size:13px}
-.nav button.active{background:#e8e5dc;color:var(--ink);font-weight:650}
+.nav button.active{background:var(--accent);color:var(--ink);font-weight:650}
 .hidden{display:none!important}
 .notice{padding:12px 13px;border-radius:13px;background:#f0eee8;color:#625f56;font-size:13px;margin-bottom:13px}
 .sectionhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
@@ -213,6 +213,27 @@ h2{font-size:19px;margin:0 0 12px}
 #evidenceModal .modalbox{padding-bottom:22px}
 #evidencePreview{max-width:100%;max-height:280px;object-fit:contain;border-radius:12px}
 .task-hidden{opacity:.65}
+.task{gap:8px}
+.taskmain{overflow-wrap:anywhere}
+.taskmenu{position:relative;flex:0 0 auto}
+.taskmenu summary{list-style:none;cursor:pointer;width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:var(--soft);font-size:20px;line-height:1}
+.taskmenu summary::-webkit-details-marker{display:none}
+.taskmenu[open] .taskmenuitems{display:grid}
+.taskmenuitems{display:none;position:absolute;right:0;top:36px;z-index:5;min-width:142px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 5px 20px #0002;gap:4px}
+.taskmenuitems button{width:100%;text-align:left;padding:8px 10px;border-radius:8px;background:var(--soft);font-size:13px}
+.rest-screen{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;text-align:center;margin-bottom:14px}
+.rest-screen h2{font-size:24px;margin:4px 0 8px}
+.rest-screen p{color:var(--muted);margin:0 0 14px}
+.rest-screen .rest-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+body[data-period="morning"]{--bg:#f7f5ed;--card:#fffefa;--accent:#eee9d8;--greeting:#f0eadb;--soft:#f3f0e6}
+body[data-period="lunch"]{--bg:#f0f1ed;--card:#fff;--accent:#e4e9e2;--greeting:#e5ebe4;--soft:#edf0eb}
+body[data-period="afternoon"]{--bg:#f4f1eb;--card:#fffdfa;--accent:#e9e3d8;--greeting:#eee5d9;--soft:#f2eee7}
+body[data-period="night"]{--bg:#252c32;--card:#303940;--ink:#f1f0e9;--muted:#c0c4c1;--line:#465057;--accent:#414d54;--greeting:#35434a;--soft:#414c52;--green:#9dbb9b;color-scheme:dark}
+body[data-period="night"] .field,body[data-period="night"] input,body[data-period="night"] select,body[data-period="night"] textarea{background:#263138;color:#f1f0e9;border-color:#526068}
+body[data-period="night"] .notice,body[data-period="night"] .bubble{background:#414b50;color:#f1f0e9}
+body[data-period="night"] .composer{background:#252c32ee;border-color:#465057}
+body[data-period="night"] .daynav-day{background:#3b454b;color:#f1f0e9}
+body[data-period="night"] .daynav-day.active{background:#52675b;color:#fff}
 @media(max-width:390px){.shift-controls{grid-template-columns:1fr}.stockrow{gap:6px}.stockname{font-size:13px}.stock-actions button{min-width:28px}}
 
 </style>
@@ -266,6 +287,7 @@ h2{font-size:19px;margin:0 0 12px}
 
   <!-- CONTROLES DOS TURNOS -->
   <div id="shiftPanel"></div>
+  <div id="restScreen" class="rest-screen hidden"></div>
 
   <!-- CONTEÚDO PRINCIPAL -->
   <div id="legacyHome">
@@ -362,9 +384,8 @@ h2{font-size:19px;margin:0 0 12px}
 
 
 <section id="stock" class="hidden">
- <div class="notice">Saldos iniciais são estimativas. Registre recebimentos e correções para manter o controle atualizado.</div>
+ <div class="notice">Ajuste os saldos diretamente pelos botões +/− ou em Editar. Você também pode cadastrar e excluir materiais.</div>
  <div class="card"><div class="sectionhead"><h2>Materiais</h2><button class="smallbtn" id="addMaterialBtn">＋ Material</button></div><div id="stockList"></div></div>
- <div class="card"><h2>Registrar movimentação</h2><div class="row"><select id="movementMaterial"></select><select id="movementType"><option value="in">Recebimento +</option><option value="out">Consumo −</option><option value="set">Contagem física =</option></select></div><div class="row"><input id="movementQty" type="number" min="0" placeholder="Quantidade"><button class="primary" id="saveMovement">Registrar</button></div></div>
 </section>
 <section id="history" class="hidden"><div class="card"><div class="sectionhead"><h2>Histórico</h2><button class="smallbtn" id="exportBtn">Exportar</button></div><div id="historyList"></div></div></section>
 <p class="footerhint">Zia · Dados guardados neste navegador. Faça backups e não registre dados identificáveis de pacientes.</p>
@@ -423,6 +444,15 @@ const dayKey = () => {
 };
 
 const dateObj=k=>new Date((k||dayKey())+'T12:00:00');
+const keyFromDate=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const nextDateKey=k=>{const d=dateObj(k);d.setDate(d.getDate()+1);return keyFromDate(d)};
+function updateDayTheme(){
+ const h=new Date().getHours(),period=h<11?'morning':h<14?'lunch':h<17?'afternoon':'night';
+ document.body.dataset.period=period;
+ const meta=document.querySelector('meta[name="theme-color"]');
+ if(meta)meta.content=period==='night'?'#252c32':period==='lunch'?'#f0f1ed':period==='afternoon'?'#f4f1eb':'#f7f5ed';
+ return period;
+}
 const weekKey=k=>{let d=dateObj(k),n=(d.getDay()+6)%7;d.setDate(d.getDate()-n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const fmtDate=()=>new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
 const weekdays=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
@@ -502,6 +532,7 @@ function fresh(){return {customTasks:[],materials:initialMaterials.map(x=>({...x
 let db;try{db=JSON.parse(localStorage.getItem('ziaDB'))||fresh()}catch(e){db=fresh()}
 for(const k of ['customTasks','materials','history','completions','movements','appointments','routineOverrides','hiddenTasks','taskOrder','dayNotes','weeklyCompletions','shiftStates','dayExceptions'])db[k]??=(k==='materials'?initialMaterials.map(x=>({...x})):['appointments','customTasks','history','movements'].includes(k)?[]:{});
 db.pendingTasks??=[];
+db.carryoverTasks??={};
 db.shiftStates??={};db.dayExceptions??={};
 db.settings??={speechMode:'all',voiceURI:'',rate:.92,pitch:1.08};
 let currentImage=null,availableVoices=[];
@@ -510,7 +541,8 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function log(msg,type='info'){db.history.unshift({at:new Date().toISOString(),msg,type});save();renderHistory()}
 function saturdayRole(k=dayKey()){let d=dateObj(k);if(d.getDay()!==6)return null;let start=dateObj('2026-10-24'),weeks=Math.floor((d-start)/604800000);if(weeks<0)return 'Antes da escala definida';return ['Recepção','Área de coleta','Folga'][weeks%3]}
 function appointmentOccurs(a,k=dayKey()){let d=dateObj(k);if(d.getDay()!==Number(a.day))return false;if(a.frequency==='weekly')return true;if(d<dateObj(a.startDate||k))return false;return Math.round((dateObj(weekKey(k))-dateObj(weekKey(a.startDate||k)))/604800000)%2===0}
-function todayAppointments(){return db.appointments.filter(a=>appointmentOccurs(a))}
+function todayAppointments(k=dayKey()){return db.appointments.map((a,i)=>({...a,_sequence:Number.isFinite(a.order)?a.order:i})).filter(a=>appointmentOccurs(a,k)).sort((a,b)=>a._sequence-b._sequence)}
+function moveAppointment(id,delta){const current=db.appointments.find(a=>a.id===id);if(!current)return;const same=todayAppointments().filter(a=>a.day===current.day&&a.frequency===current.frequency);const i=same.findIndex(a=>a.id===id),j=i+delta;if(j<0||j>=same.length)return;[same[i],same[j]]=[same[j],same[i]];same.forEach((a,index)=>{const original=db.appointments.find(x=>x.id===a.id);original.order=index});save();renderTasks();}
 function weeklyDone(id){return !!(db.weeklyCompletions[weekKey()]||{})[id]}
 
 function taskShift(t){
@@ -552,10 +584,22 @@ function renderShiftPanel(){
  </div>`;
 }
 function setShift(type,action){
- const st=shiftState();
- if(action==='start'){st[type]=true;st[type+'Ended']=false;log(`Turno da ${type==='morning'?'manhã':'tarde'} iniciado.`)}
- else{st[type+'Ended']=true;log(`Turno da ${type==='morning'?'manhã':'tarde'} encerrado.`)}
- save();renderShiftPanel();reply(action==='start'?'Vamos começar. Vou acompanhar as atividades deste turno.':'Turno encerrado. Você pode descansar um pouco. 🌱');
+ const st=shiftState(),label=type==='morning'?'manhã':'tarde';
+ if(action==='start'){
+  st[type]=true;st[type+'Ended']=false;
+  log(`Turno da ${label} iniciado.`);
+ }else{
+  const k=dayKey(),tomorrow=nextDateKey(k),tasks=todaysTasks().filter(t=>taskShift(t)===type&&!t.done&&!t.weekly);
+  db.carryoverTasks[tomorrow]??=[];
+  for(const t of tasks){
+   db.carryoverTasks[tomorrow]=db.carryoverTasks[tomorrow].filter(x=>!(x.sourceDate===k&&x.sourceId===t.id));
+   db.carryoverTasks[tomorrow].push({id:`carry_${k}_${t.id}`,sourceId:t.id,sourceDate:k,title:t.title,time:t.time||'Pendente do dia anterior',kind:'Pendente',group:t.group||'main',shift:type,carryover:true});
+  }
+  st[type+'Ended']=true;
+  log(`Turno da ${label} encerrado. ${tasks.length} tarefa(s) não concluída(s) encaminhada(s) para ${tomorrow}.`);
+ }
+ save();renderTasks();
+ reply(action==='start'?'Vamos começar. Vou acompanhar as atividades deste turno.':`Turno encerrado. ${type==='morning'?'As tarefas da manhã concluídas saíram da tela.':'As tarefas concluídas saíram da tela.'} ${db.carryoverTasks[nextDateKey(dayKey())]?.length?'As pendências foram encaminhadas para amanhã.':'Você pode descansar um pouco. 🌱'}`);
 }
 function moveTask(id,delta){
  const list=todaysTasks(),t=list.find(x=>x.id===id);if(!t)return;
@@ -613,7 +657,8 @@ function todaysTasks(){
  base=base.filter(t=>!(db.hiddenTasks[k]||[]).includes(t.id)).map(t=>({...t,...(db.routineOverrides[t.id]||{})}));
  if(d!==0&&d!==6)base.push({...defaults.find(t=>t.id==='stock_weekly')});
  const custom=db.customTasks.filter(t=>t.date===k).map(t=>({...t,group:t.group||'main'}));
- const all=[...base,...custom].map(t=>({...t,done:t.weekly?weeklyDone(t.id):!!(db.completions[k]||{})[t.id]}));
+ const carried=(db.carryoverTasks[k]||[]).map(t=>({...t,group:t.group||'main'}));
+ const all=[...base,...custom,...carried].map(t=>({...t,done:t.weekly?weeklyDone(t.id):!!(db.completions[k]||{})[t.id]}));
  const order=db.taskOrder.global||[];
  return all.sort((a,b)=>{let aa=order.indexOf(a.id),bb=order.indexOf(b.id);return (aa<0?9999:aa)-(bb<0?9999:bb)});
 }
@@ -621,11 +666,13 @@ function taskHtml(t){return `<div class="task" data-task="${esc(t.id)}" data-gro
 <button class="draghandle" data-drag="${esc(t.id)}" aria-label="Arrastar tarefa">↕</button>
 <button class="check ${t.done?'done':''}" data-check="${esc(t.id)}">${t.done?'✓':''}</button>
 <div class="taskmain"><div class="tasktitle" style="${t.done?'text-decoration:line-through;color:#777':''}">${esc(t.title)}</div><div class="taskmeta">${esc(t.time||'Sem horário')} · ${esc(t.kind||'Adicional')}</div>${t.done?'<span class="pill">Concluída</span>':''}</div>
-<div class="tasktools"><button class="mini" data-move-task="${esc(t.id)}" data-delta="-1" aria-label="Mover para cima">↑</button><button class="mini" data-move-task="${esc(t.id)}" data-delta="1" aria-label="Mover para baixo">↓</button><button class="mini task-photo" data-photo-task="${esc(t.id)}" aria-label="Adicionar foto">▧</button><button class="mini" data-edit-task="${esc(t.id)}" aria-label="Editar">✎</button><button class="mini" data-delete-task="${esc(t.id)}" aria-label="Excluir">×</button></div></div>`}
+<details class="taskmenu"><summary aria-label="Ações da tarefa">⋮</summary><div class="taskmenuitems"><button data-move-task="${esc(t.id)}" data-delta="-1">↑ Mover para cima</button><button data-move-task="${esc(t.id)}" data-delta="1">↓ Mover para baixo</button><button data-photo-task="${esc(t.id)}">▧ Anexar foto</button><button data-edit-task="${esc(t.id)}">✎ Editar</button><button data-delete-task="${esc(t.id)}">× Excluir</button></div></details></div>`}
 function renderTasks(){
- renderCalendar();renderShiftPanel();
+ renderCalendar();renderShiftPanel();updateDayTheme();
  $('todayLabel').textContent=selectedDate.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
- const ts=todaysTasks(),done=ts.filter(t=>t.done).length;
+ const allTasks=todaysTasks(),st=shiftState();
+ const ts=allTasks.filter(t=>!(st[taskShift(t)+'Ended']&&t.done));
+ const done=allTasks.filter(t=>t.done).length;
  const apps=todayAppointments(),role=saturdayRole(),ex=dayException();
  const flex=ts.filter(t=>t.group==='flex');
  const prioritizeFlex=ex.type==='extra'||(apps.length>0&&ex.type!=='cancelled');
@@ -638,10 +685,21 @@ function renderTasks(){
  let n=ts.find(t=>!t.done);
  $('nextTask').innerHTML=n?`<div class="tasktitle">${esc(n.title)}</div><div class="taskmeta">${esc(n.time)}</div><button class="primary" style="margin-top:10px" data-check="${esc(n.id)}">Concluir e avançar</button>`:'Tudo concluído por aqui. 🌱';
  $('planningCard').innerHTML=`<strong>${ex.type==='cancelled'?'Tarde liberada':ex.type==='extra'?'Atendimento extra':apps.length?'Atenção: tarde com atendimento':'Planejamento de hoje'}</strong><br>${ex.type==='cancelled'?'O profissional desmarcou. Distribua as tarefas flexíveis ao longo do dia.':ex.type==='extra'?'Há uma demanda extra à tarde. Priorize tarefas flexíveis pela manhã.':apps.length?`Há ${apps.length} atendimento(s) previsto(s) à tarde. Priorize clientes, coletas e tarefas obrigatórias. Se houver mais pessoas pela manhã, tente adiantar limpeza e estoque.`:'Prioridade: clientes, coletas e tarefas obrigatórias. Faça as tarefas flexíveis apenas quando houver disponibilidade.'}${role?`<br><br><strong>Escala de sábado:</strong> ${esc(role)}.`:''}`;
- $('appointments').innerHTML=db.appointments.length?db.appointments.map(a=>`<div class="task"><div class="taskmain"><div class="tasktitle">${esc(a.name)}</div><div class="taskmeta">${weekdays[a.day]} à tarde · ${a.frequency==='weekly'?'Toda semana':'A cada 15 dias'}${a.frequency==='biweekly'?' · início '+esc(a.startDate):''}</div></div><button class="mini" data-edit-appointment="${a.id}">Editar</button><button class="mini" data-delete-appointment="${a.id}">×</button></div>`).join(''):'<div class="empty">Cadastre os profissionais que atendem à tarde. A Zia avisará quando adiantar tarefas flexíveis.</div>';
+ $('appointments').innerHTML=apps.length?apps.map((a,i)=>`<div class="task"><div class="taskmain"><div class="tasktitle">${i+1}. ${esc(a.name)}</div><div class="taskmeta">${weekdays[a.day]} à tarde · ${a.frequency==='weekly'?'Toda semana':'A cada 15 dias'}${a.frequency==='biweekly'?' · início '+esc(a.startDate):''}</div></div><details class="taskmenu"><summary>⋮</summary><div class="taskmenuitems"><button data-move-appointment="${a.id}" data-delta="-1">↑ Subir na sequência</button><button data-move-appointment="${a.id}" data-delta="1">↓ Descer na sequência</button><button data-edit-appointment="${a.id}">✎ Editar</button><button data-delete-appointment="${a.id}">× Excluir</button></div></details></div>`).join(''):'<div class="empty">Nenhum profissional previsto para este dia. Cadastre um atendimento em ＋ Profissional.</div>';
  $('dayNote').value=db.dayNotes[dayKey()]||'';
- $('pendingCount').textContent=`${db.pendingTasks.length} ${db.pendingTasks.length===1?'tarefa':'tarefas'}`;
- $('pendingTasks').innerHTML=db.pendingTasks.length?db.pendingTasks.map(t=>`<div class="task"><div class="taskmain"><div class="tasktitle">${esc(t.title)}</div><div class="taskmeta">${esc(t.note||'Adiada')}</div></div></div>`).join(''):'Nenhuma pendência por enquanto. 🌱';
+ const isRealToday=dayKey()===realTodayKey(),period=updateDayTheme();
+ const resting=isRealToday&&period==='night';
+ $('restScreen').classList.toggle('hidden',!resting);
+ $('legacyHome').classList.toggle('hidden',resting&&!window.ziaShowAgendaAfterHours);
+ if(resting){
+  $('restScreen').innerHTML=`<div class="eyebrow">Expediente encerrado</div><h2>${new Date().getHours()>=20?'Boa noite':'Bom descanso'} 🌙</h2><p>Você fez a sua parte por hoje. Amanhã a gente continua, com calma e organização.</p><div class="rest-actions"><button class="secondary" id="showAgendaAfterHours">Consultar agenda</button><button class="primary" id="finishDayRest">Até amanhã</button></div>`;
+  $('showAgendaAfterHours').onclick=()=>{window.ziaShowAgendaAfterHours=true;$('legacyHome').classList.remove('hidden')};
+  $('finishDayRest').onclick=()=>reply('Até amanhã! Descanse e cuide de você. 🌙',true);
+ }else{window.ziaShowAgendaAfterHours=false}
+ const carriedToday=(db.carryoverTasks[dayKey()]||[]);
+ const pendingTotal=db.pendingTasks.length+carriedToday.length;
+ $('pendingCount').textContent=`${pendingTotal} ${pendingTotal===1?'tarefa':'tarefas'}`;
+ $('pendingTasks').innerHTML=pendingTotal?[...carriedToday.map(t=>({title:t.title,note:`Veio de ${t.sourceDate} · ${t.shift==='morning'?'manhã':'tarde'}`})),...db.pendingTasks].map(t=>`<div class="task"><div class="taskmain"><div class="tasktitle">${esc(t.title)}</div><div class="taskmeta">${esc(t.note||'Adiada')}</div></div></div>`).join(''):'Nenhuma pendência por enquanto. 🌱';
  const hidden=(db.hiddenTasks[dayKey()]||[]);
  $('hiddenTaskRestore').innerHTML=hidden.length?`Tarefas ocultadas: ${hidden.map(id=>{const t=defaults.find(x=>x.id===id);return t?`<button class="mini" data-restore-task="${esc(id)}">Restaurar ${esc(t.title)}</button>`:''}).join(' ')}`:'';
  bindDrag();renderEvidence();
@@ -704,8 +762,7 @@ function bindDrag(){
  });
 }
 function renderStock(){
- $('stockList').innerHTML=db.materials.map(m=>`<div class="stockrow"><div class="stockname">${esc(m.name)}<div class="taskmeta">${esc(m.certainty||'Estimado')}</div></div><div style="text-align:right"><div class="stocknum">${m.qty}</div><div class="stockunit">${esc(m.unit||'unidades')}</div></div><div class="stock-actions"><button data-stock-change="${m.id}" data-amount="-1" aria-label="Diminuir">−</button><button data-stock-change="${m.id}" data-amount="1" aria-label="Aumentar">+</button><button class="smallbtn" data-correct="${m.id}">Editar</button></div></div>`).join('');
- $('movementMaterial').innerHTML=db.materials.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('');
+ $('stockList').innerHTML=db.materials.map(m=>`<div class="stockrow"><div class="stockname">${esc(m.name)}<div class="taskmeta">${esc(m.certainty||'Estimado')}</div></div><div style="text-align:right"><div class="stocknum">${m.qty}</div><div class="stockunit">${esc(m.unit||'unidades')}</div></div><div class="stock-actions"><button data-stock-change="${m.id}" data-amount="-1" aria-label="Diminuir">−</button><button data-stock-change="${m.id}" data-amount="1" aria-label="Aumentar">+</button><button class="smallbtn" data-correct="${m.id}">Editar</button><button class="smallbtn" data-delete-material="${m.id}" aria-label="Excluir material">×</button></div></div>`).join('')||'<div class="empty">Nenhum material cadastrado.</div>';
 }
 function renderHistory(){$('historyList').innerHTML=db.history.length?db.history.slice(0,150).map(h=>`<div class="task"><div class="taskmain">${esc(h.msg)}<div class="taskmeta">${new Date(h.at).toLocaleString('pt-BR')}</div></div></div>`).join(''):'<div class="empty">Ainda não há registros.</div>'}
 function render(){$('todayLabel').textContent=fmtDate().toUpperCase();renderTasks();renderStock();renderHistory()}
@@ -774,7 +831,7 @@ function command(raw){
  let add=s.match(/(?:adiciona|cria|lembra|anota)(?:r|me)?\s+(?:uma tarefa|que|de)?\s*(.+)/i);
  if(add&&add[1]){let title=add[1].replace(/[.!?]+$/,'').trim();if(title.length<3)return reply('Me diga o que preciso lembrar.');db.customTasks.push({id:'custom_'+Date.now(),title,date:dayKey(),time:'A definir',kind:'Extra de hoje',group:'main'});save();log('Tarefa adicionada: '+title);renderTasks();reply('Anotei para hoje: '+title);return}
  let recv=s.match(/(?:chegaram|recebi|recebemos)\s+(\d+)\s+(.+)/i);
- if(recv){let n=Number(recv[1]),term=recv[2].toLowerCase(),m=db.materials.find(m=>term.includes(m.name.toLowerCase())||m.name.toLowerCase().includes(term.replace(/s$/,'')));if(m){m.qty+=n;m.certainty='Registrado';db.movements.unshift({at:new Date().toISOString(),material:m.id,type:'in',qty:n});save();log(`Recebimento: ${n} ${m.name}; saldo ${m.qty}.`);renderStock();reply(`Registrei ${n} ${m.name}. Saldo: ${m.qty}.`)}else reply('Não identifiquei o material. Abra Estoque e selecione-o.');return}
+ if(recv){let n=Number(recv[1]),term=recv[2].toLowerCase(),m=db.materials.find(m=>term.includes(m.name.toLowerCase())||m.name.toLowerCase().includes(term.replace(/s$/,'')));if(m){m.qty+=n;m.certainty='Saldo atualizado manualmente';save();log(`Saldo ajustado: ${m.name}, +${n}; total ${m.qty}.`);renderStock();reply(`Atualizei ${m.name}. Saldo: ${m.qty}.`)}else reply('Não identifiquei o material. Abra Estoque e selecione-o.');return}
  reply('Posso consultar tarefas e estoque, concluir tarefas ou adicionar um lembrete para hoje.')
 }
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['home','stock','history'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});
@@ -793,14 +850,16 @@ return;
  let mover=e.target.closest('[data-move-task]');if(mover){moveTask(mover.dataset.moveTask,Number(mover.dataset.delta));return}
  let photoTask=e.target.closest('[data-photo-task]');if(photoTask){openEvidence(photoTask.dataset.photoTask);return}
  let view=e.target.closest('[data-view-evidence]');if(view){getEvidence(view.dataset.viewEvidence).then(p=>{if(p){$('viewerImage').src=p.dataUrl;$('imageViewer').classList.remove('hidden')}});return}
- let stockChange=e.target.closest('[data-stock-change]');if(stockChange){const m=db.materials.find(x=>x.id===stockChange.dataset.stockChange),delta=Number(stockChange.dataset.amount);if(m){if(delta<0&&m.qty<1){reply('O saldo já está zerado.');return}m.qty+=delta;m.certainty='Saldo atualizado manualmente';db.movements.unshift({at:new Date().toISOString(),material:m.id,type:delta>0?'in':'out',qty:1});save();log(`${delta>0?'Entrada':'Consumo'} rápida: ${m.name}, 1 unidade; saldo ${m.qty}.`);renderStock()}return}
+ let stockChange=e.target.closest('[data-stock-change]');if(stockChange){const m=db.materials.find(x=>x.id===stockChange.dataset.stockChange),delta=Number(stockChange.dataset.amount);if(m){if(delta<0&&m.qty<1){reply('O saldo já está zerado.');return}m.qty=Math.max(0,m.qty+delta);m.certainty='Saldo atualizado manualmente';save();log(`Saldo ajustado: ${m.name}, ${m.qty} ${m.unit||'unidades'}.`);renderStock()}return}
 
  let c=e.target.closest('[data-check]');if(c)complete(c.dataset.check);
  let et=e.target.closest('[data-edit-task]');if(et)editTask(et.dataset.editTask);
  let dt=e.target.closest('[data-delete-task]');if(dt)deleteTask(dt.dataset.deleteTask)
+ let ma=e.target.closest('[data-move-appointment]');if(ma){moveAppointment(ma.dataset.moveAppointment,Number(ma.dataset.delta));return}
  let ea=e.target.closest('[data-edit-appointment]');if(ea)editAppointment(ea.dataset.editAppointment);
  let da=e.target.closest('[data-delete-appointment]');if(da&&confirm('Excluir este atendimento?')){db.appointments=db.appointments.filter(a=>a.id!==da.dataset.deleteAppointment);save();renderTasks()}
- let ed=e.target.closest('[data-correct]');if(ed){let m=db.materials.find(x=>x.id===ed.dataset.correct),v=prompt(`Saldo físico conferido de ${m.name}:`,m.qty);if(v!==null&&v.trim()!==''&&Number(v)>=0){let old=m.qty;m.qty=Number(v);m.certainty='Contagem física confirmada';save();log(`Correção: ${m.name}, de ${old} para ${m.qty}.`);renderStock();reply(`Saldo atualizado para ${m.qty} ${m.unit}.`)}}
+ let ed=e.target.closest('[data-correct]');if(ed){let m=db.materials.find(x=>x.id===ed.dataset.correct);if(m){let name=prompt('Nome do material:',m.name);if(name===null)return;let v=prompt(`Quantidade atual de ${name}:`,m.qty);if(v===null||v.trim()===''||!Number.isFinite(Number(v))||Number(v)<0)return alert('Informe uma quantidade válida.');m.name=name.trim()||m.name;m.qty=Number(v);m.certainty='Saldo atualizado manualmente';save();log(`Material atualizado: ${m.name}, saldo ${m.qty}.`);renderStock()}} 
+ let delMat=e.target.closest('[data-delete-material]');if(delMat){let m=db.materials.find(x=>x.id===delMat.dataset.deleteMaterial);if(m&&confirm(`Excluir "${m.name}" do estoque? Esta ação não pode ser desfeita.`)){db.materials=db.materials.filter(x=>x.id!==m.id);save();log(`Material excluído do estoque: ${m.name}.`);renderStock()}return}
 });
   $('prevWeek').onclick=()=>{
   selectedDate.setDate(selectedDate.getDate()-7);
@@ -815,9 +874,8 @@ $('sendBtn').onclick=()=>command($('commandInput').value);$('commandInput').onke
 document.querySelectorAll('[data-command]').forEach(b=>b.onclick=()=>command(b.dataset.command));
 $('addTaskBtn').onclick=()=>addTask('main');$('addFlexibleBtn').onclick=()=>addTask('flex');$('editRoutineBtn').onclick=editRoutine;$('addAppointmentBtn').onclick=addAppointment;
 $('saveNoteBtn').onclick=()=>{db.dayNotes[dayKey()]=$('dayNote').value.trim();save();log('Ocorrência de hoje atualizada.');reply('Salvei a ocorrência somente para hoje.')};
-$('addMaterialBtn').onclick=()=>{let name=prompt('Nome do material:');if(!name?.trim())return;let qty=Number(prompt('Saldo inicial (0 se ainda não conferiu):','0'));if(!Number.isFinite(qty)||qty<0)return;db.materials.push({id:'mat_'+Date.now(),name:name.trim(),qty,certainty:'Estimado',unit:'unidades'});save();log(`Material cadastrado: ${name}, saldo ${qty}.`);renderStock()};
-$('saveMovement').onclick=()=>{let m=db.materials.find(x=>x.id===$('movementMaterial').value),type=$('movementType').value,n=Number($('movementQty').value);if(!m||!Number.isFinite(n)||n<0||$('movementQty').value==='')return alert('Escolha material e quantidade válida.');if(type==='in')m.qty+=n;else if(type==='out'){if(n>m.qty)return alert('O consumo não pode ser maior que o saldo disponível.');m.qty-=n}else{m.qty=n;m.certainty='Contagem física confirmada'}if(type!=='set')m.certainty='Saldo calculado por movimentações';db.movements.unshift({at:new Date().toISOString(),material:m.id,type,qty:n});save();log(`${type==='in'?'Recebimento':type==='out'?'Consumo':'Contagem física'}: ${m.name}, quantidade ${n}; saldo ${m.qty}.`);$('movementQty').value='';renderStock();reply('Movimentação registrada.')};
-async function backup(){let photos=[];try{photos=await getAllEvidence()}catch(e){}let blob=new Blob([JSON.stringify({app:'zia',version:5,exportedAt:new Date().toISOString(),data:db,evidence:photos},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='zia-backup-'+dayKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);log('Backup exportado, incluindo as fotos de evidência disponíveis.')}
+$('addMaterialBtn').onclick=()=>{let name=prompt('Nome do material:');if(!name?.trim())return;let raw=prompt('Quantidade inicial:','0');if(raw===null||raw.trim()===''||!Number.isFinite(Number(raw))||Number(raw)<0)return alert('Informe uma quantidade válida.');let qty=Number(raw);db.materials.push({id:'mat_'+Date.now(),name:name.trim(),qty,certainty:'Saldo informado manualmente',unit:'unidades'});save();log(`Material cadastrado: ${name}, saldo ${qty}.`);renderStock()};
+async function backup(){let photos=[];try{photos=await getAllEvidence()}catch(e){}let blob=new Blob([JSON.stringify({app:'zia',version:6,exportedAt:new Date().toISOString(),data:db,evidence:photos},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='zia-backup-'+dayKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);log('Backup exportado, incluindo as fotos de evidência disponíveis.')}
 $('backupBtn').onclick=backup;$('exportBtn').onclick=backup;
 $('micBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return reply('O reconhecimento de voz não está disponível neste navegador. Tente Chrome no Android ou digite.');let rec=new SR();rec.lang='pt-BR';rec.interimResults=false;$('micBtn').classList.add('listening');rec.onresult=e=>command(e.results[0][0].transcript);rec.onerror=()=>reply('Não consegui acessar o microfone ou entender. Tente novamente ou digite.');rec.onend=()=>$('micBtn').classList.remove('listening');try{rec.start()}catch(e){$('micBtn').classList.remove('listening');reply('Não consegui iniciar o microfone.')}};
 function loadVoices(){if(!('speechSynthesis'in window))return;availableVoices=speechSynthesis.getVoices();let list=$('voiceSelect');list.innerHTML='';if(!availableVoices.length){list.innerHTML='<option value="">Nenhuma voz disponível ainda</option>';return}
@@ -843,7 +901,7 @@ $('analyzePhoto').onclick=async()=>{if(!currentImage)return reply('Escolha uma f
 try{let encoded=await imageToBase64(currentImage),response=await fetch('https://zia-gemini-api.kbelima18.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...encoded,question,notes})}),data={};try{data=await response.json()}catch(e){}if(!response.ok||data.error)throw new Error(data.error||`O serviço respondeu com código ${response.status}.`);let description=data.description||data.text||data.response;if(!description)throw new Error('A resposta não trouxe descrição da imagem.');$('photoResult').textContent=description;log(`Análise de imagem (${currentImage.name}). Pergunta: ${question}. Resposta: ${description}`,'image');reply('Recebi a análise. Confira a resposta antes de usar qualquer informação no trabalho.')}
 catch(err){$('photoResult').textContent='Não consegui analisar a imagem. '+(err?.message||'Erro desconhecido')+'\nConfira a conexão e tente novamente.';reply('Não consegui concluir a análise. A mensagem de erro está na janela.')}
 finally{b.disabled=false;b.textContent='Analisar imagem'}};
-render();loadVoices();
+render();loadVoices();updateDayTheme();setInterval(()=>{const old=document.body.dataset.period;updateDayTheme();if(old!==document.body.dataset.period)renderTasks()},60000);
 </script>
 </body>
 </html>
