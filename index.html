@@ -190,123 +190,31 @@ h2{font-size:19px;margin:0 0 12px}
   }
 }
 
-/* ===== CALENDÁRIO SEMANAL DA ZIA ===== */
 
-#calendarCard {
-  padding: 14px;
-}
+/* ===== CONSOLIDAÇÃO: TURNOS, EVIDÊNCIAS E AÇÕES ===== */
+.shift-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.shift-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px}
+.shift-card strong{display:block;margin-bottom:4px}
+.shift-status{font-size:12px;color:var(--muted)}
+.shift-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.shift-actions button{flex:1;min-width:105px}
+.shift-actions .started{background:#e4ebe1;color:#405b43}
+.taskshiftlabel{font-size:13px;font-weight:700;color:var(--green);padding:8px 10px;border-radius:10px;background:#edf1e9;margin:12px 0 9px}
+.tasktools .mini{min-width:29px;min-height:29px;padding:5px}
+.task-photo{font-size:13px}
+.evidence-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.evidence-thumb{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid var(--line);cursor:pointer}
+.stock-actions{display:flex;align-items:center;gap:5px}
+.stock-actions button{min-width:31px;height:31px;border-radius:9px;background:#edf1e9;color:#405b43;font-weight:700}
+.stock-actions .smallbtn{background:#f0eee8;color:var(--ink);font-weight:400}
+.exception-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.exception-actions button{flex:1}
+.exception-note{font-size:12px;color:var(--muted);margin-top:7px}
+#evidenceModal .modalbox{padding-bottom:22px}
+#evidencePreview{max-width:100%;max-height:280px;object-fit:contain;border-radius:12px}
+.task-hidden{opacity:.65}
+@media(max-width:390px){.shift-controls{grid-template-columns:1fr}.stockrow{gap:6px}.stockname{font-size:13px}.stock-actions button{min-width:28px}}
 
-#calendarCard .sectionhead {
-  margin-bottom: 14px;
-}
-
-#dayNavMonth {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0;
-  text-transform: capitalize;
-}
-
-#calendarCard .tasktools {
-  gap: 6px;
-}
-
-#calendarCard .smallbtn {
-  min-width: 36px;
-  min-height: 34px;
-  font-size: 17px;
-  padding: 5px 10px;
-}
-
-#dayNavDays {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 5px;
-  width: 100%;
-}
-
-.daynav-day {
-  min-width: 0;
-  border: 1px solid transparent;
-  border-radius: 13px;
-  background: #f5f4f0;
-  color: var(--ink);
-  padding: 9px 2px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  font-size: 11px;
-}
-
-.daynav-day .day-number {
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.daynav-day.active {
-  background: #e4ebe1;
-  border-color: #9aaf96;
-  color: #405b43;
-}
-
-.daynav-day.today {
-  box-shadow: inset 0 0 0 1px var(--green);
-}
-
-.daynav-day .day-indicator {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: transparent;
-}
-
-.daynav-day.has-items .day-indicator {
-  background: var(--green);
-}
-
-/* ===== IDENTIFICAÇÃO DOS TURNOS ===== */
-
-#shiftPanel {
-  margin-bottom: 13px;
-}
-
-#legacyHome > .card {
-  overflow: hidden;
-}
-
-#legacyHome .sectionhead {
-  flex-wrap: wrap;
-}
-
-#legacyHome .taskshiftlabel {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--green);
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: #edf1e9;
-  margin-bottom: 9px;
-}
-
-/* ===== AJUSTES PARA CELULAR ===== */
-
-@media (max-width: 380px) {
-  #dayNavDays {
-    gap: 3px;
-  }
-
-  .daynav-day {
-    padding: 8px 1px;
-    font-size: 10px;
-  }
-
-  .daynav-day .day-number {
-    font-size: 14px;
-  }
-}
- 
 </style>
 </head>
 <body>
@@ -393,6 +301,7 @@ h2{font-size:19px;margin:0 0 12px}
 
       <div style="font-weight:700;margin:18px 0 8px">Turno da tarde</div>
       <div id="afternoonTasks"></div>
+      <div id="hiddenTaskRestore" class="exception-note"></div>
     </div>
 
     <!-- TAREFAS FLEXÍVEIS -->
@@ -485,6 +394,19 @@ h2{font-size:19px;margin:0 0 12px}
  <div class="row"><button class="secondary" id="chooseAgain">Outra foto</button><button class="primary" id="analyzePhoto">Analisar imagem</button></div><div id="photoResult" class="result hidden"></div>
 </div></div>
 
+
+<div id="evidenceModal" class="modal hidden"><div class="modalbox">
+ <div class="modalhead"><h2>Foto da atividade</h2><button class="smallbtn" data-close="evidenceModal">Fechar ✕</button></div>
+ <p class="muted" id="evidenceTaskName">Anexar uma evidência a esta tarefa.</p>
+ <input id="evidenceInput" type="file" accept="image/*" capture="environment" class="field">
+ <img id="evidencePreview" class="hidden" alt="Prévia da evidência">
+ <div class="row"><button class="secondary" id="cancelEvidence">Cancelar</button><button class="primary" id="saveEvidence">Salvar foto</button></div>
+</div></div>
+<div id="imageViewer" class="modal hidden"><div class="modalbox">
+ <div class="modalhead"><h2>Foto salva</h2><button class="smallbtn" data-close="imageViewer">Fechar ✕</button></div>
+ <img id="viewerImage" style="width:100%;max-height:75vh;object-fit:contain;border-radius:12px" alt="Evidência ampliada">
+</div></div>
+
 <script>
 const $=id=>document.getElementById(id);
 
@@ -568,18 +490,19 @@ const defaults=[
 {id:'centrifuge',title:'Centrifugar amostras e anotar soro, plasma e sangue total no caderno',time:'8h–9h45',kind:'Obrigatória',group:'main'},
 {id:'release',title:'Liberar a caixa de transporte',time:'Por volta das 10h',kind:'Obrigatória',group:'main'},
 {id:'transport',title:'Lançar as informações do transporte no sistema Acredite-se',time:'10h–10h10',kind:'Obrigatória',group:'main'},
-{id:'temp',title:'Registrar as temperaturas da tarde no sistema Acredite-se',time:'Conforme a rotina do laboratório',kind:'Obrigatória',group:'main'},
-{id:'closing',title:'Checklist de fechamento: computadores, ar-condicionado e bandeirolas',time:'Final do turno',kind:'Obrigatória',group:'main'},
-{id:'coffee',title:'Programar a cafeteira para o dia seguinte',time:'Final do turno',kind:'Obrigatória',group:'main'},
+{id:'temp',title:'Registrar as temperaturas da tarde no sistema Acredite-se',time:'Início do turno da tarde (14h)',kind:'Obrigatória',group:'main',shift:'afternoon'},
+{id:'closing',title:'Checklist de fechamento: computadores, ar-condicionado e bandeirolas',time:'Final do turno da tarde',kind:'Obrigatória',group:'main',shift:'afternoon'},
+{id:'coffee',title:'Programar a cafeteira para o dia seguinte',time:'Final do turno da tarde',kind:'Obrigatória',group:'main',shift:'afternoon'},
 {id:'plant',title:'Conferir se a planta precisa de água',time:'Quando houver disponibilidade',kind:'Flexível',group:'flex'},
 {id:'bathroom',title:'Lavar o banheiro',time:'Quando houver disponibilidade',kind:'Oportunidade',group:'flex'},
 {id:'sweep',title:'Varrer e passar pano',time:'Quando houver disponibilidade',kind:'Oportunidade',group:'flex'},
 {id:'stock_weekly',title:'Conferir o estoque (pelo menos uma vez na semana)',time:'Semanal',kind:'Periódica',group:'flex',weekly:true}
 ];
-function fresh(){return {customTasks:[],materials:initialMaterials.map(x=>({...x})),history:[],completions:{},movements:[],appointments:[],routineOverrides:{},hiddenTasks:{},taskOrder:{},dayNotes:{},weeklyCompletions:{},settings:{speechMode:'all',voiceURI:'',rate:.92,pitch:1.08}}}
+function fresh(){return {customTasks:[],materials:initialMaterials.map(x=>({...x})),history:[],completions:{},movements:[],appointments:[],routineOverrides:{},hiddenTasks:{},taskOrder:{},dayNotes:{},weeklyCompletions:{},shiftStates:{},dayExceptions:{},settings:{speechMode:'all',voiceURI:'',rate:.92,pitch:1.08}}}
 let db;try{db=JSON.parse(localStorage.getItem('ziaDB'))||fresh()}catch(e){db=fresh()}
-for(const k of ['customTasks','materials','history','completions','movements','appointments','routineOverrides','hiddenTasks','taskOrder','dayNotes','weeklyCompletions'])db[k]??=(k==='materials'?initialMaterials.map(x=>({...x})):['appointments','customTasks','history','movements'].includes(k)?[]:{});
+for(const k of ['customTasks','materials','history','completions','movements','appointments','routineOverrides','hiddenTasks','taskOrder','dayNotes','weeklyCompletions','shiftStates','dayExceptions'])db[k]??=(k==='materials'?initialMaterials.map(x=>({...x})):['appointments','customTasks','history','movements'].includes(k)?[]:{});
 db.pendingTasks??=[];
+db.shiftStates??={};db.dayExceptions??={};
 db.settings??={speechMode:'all',voiceURI:'',rate:.92,pitch:1.08};
 let currentImage=null,availableVoices=[];
 function save(){localStorage.setItem('ziaDB',JSON.stringify(db))}
@@ -589,6 +512,100 @@ function saturdayRole(k=dayKey()){let d=dateObj(k);if(d.getDay()!==6)return null
 function appointmentOccurs(a,k=dayKey()){let d=dateObj(k);if(d.getDay()!==Number(a.day))return false;if(a.frequency==='weekly')return true;if(d<dateObj(a.startDate||k))return false;return Math.round((dateObj(weekKey(k))-dateObj(weekKey(a.startDate||k)))/604800000)%2===0}
 function todayAppointments(){return db.appointments.filter(a=>appointmentOccurs(a))}
 function weeklyDone(id){return !!(db.weeklyCompletions[weekKey()]||{})[id]}
+
+function taskShift(t){
+ if(t.shift==='afternoon'||['temp','closing','coffee'].includes(t.id))return 'afternoon';
+ if(t.shift==='morning')return 'morning';
+ return 'morning';
+}
+function shiftState(k=dayKey()){db.shiftStates[k]??={morning:false,afternoon:false,morningEnded:false,afternoonEnded:false};return db.shiftStates[k]}
+function dayException(k=dayKey()){db.dayExceptions[k]??={type:'',note:''};return db.dayExceptions[k]}
+function renderShiftPanel(){
+ const st=shiftState(),ex=dayException(),morningDone=st.morningEnded,afternoonDone=st.afternoonEnded;
+ $('shiftPanel').innerHTML=`
+ <div class="shift-controls">
+  <div class="shift-card">
+   <strong>☀️ Turno da manhã</strong>
+   <div class="shift-status">${morningDone?'Turno encerrado':st.morning?'Em andamento':'Ainda não iniciado'}</div>
+   <div class="shift-actions">
+    <button class="primary ${st.morning?'started':''}" data-shift-start="morning" ${morningDone?'disabled':''}>${st.morning?'Turno iniciado':'Iniciar manhã'}</button>
+    <button class="secondary" data-shift-end="morning" ${!st.morning||morningDone?'disabled':''}>Encerrar</button>
+   </div>
+  </div>
+  <div class="shift-card">
+   <strong>🌤️ Turno da tarde</strong>
+   <div class="shift-status">${afternoonDone?'Turno encerrado':st.afternoon?'Em andamento':'Ainda não iniciado'}</div>
+   <div class="shift-actions">
+    <button class="primary ${st.afternoon?'started':''}" data-shift-start="afternoon" ${afternoonDone?'disabled':''}>${st.afternoon?'Turno iniciado':'Iniciar tarde'}</button>
+    <button class="secondary" data-shift-end="afternoon" ${!st.afternoon||afternoonDone?'disabled':''}>Encerrar</button>
+   </div>
+  </div>
+ </div>
+ <div class="card" style="margin-top:10px">
+  <div class="sectionhead"><strong> Ajustar agenda de hoje</strong><span class="eyebrow">${ex.type==='cancelled'?'Tarde liberada':ex.type==='extra'?'Demanda extra':'Sem exceções'}</span></div>
+  <div class="exception-actions">
+   <button class="secondary" data-exception="cancelled">Profissional desmarcou</button>
+   <button class="secondary" data-exception="extra">Atendimento extra</button>
+   <button class="smallbtn" data-exception="clear">Limpar ajuste</button>
+  </div>
+  <div class="exception-note">${ex.type==='cancelled'?'A tarde foi liberada. As tarefas flexíveis podem ser distribuídas ao longo do dia.':ex.type==='extra'?'A tarde está reservada para demanda extra. Priorize as tarefas flexíveis pela manhã.':'Use estes ajustes apenas quando a agenda fugir do padrão.'}</div>
+ </div>`;
+}
+function setShift(type,action){
+ const st=shiftState();
+ if(action==='start'){st[type]=true;st[type+'Ended']=false;log(`Turno da ${type==='morning'?'manhã':'tarde'} iniciado.`)}
+ else{st[type+'Ended']=true;log(`Turno da ${type==='morning'?'manhã':'tarde'} encerrado.`)}
+ save();renderShiftPanel();reply(action==='start'?'Vamos começar. Vou acompanhar as atividades deste turno.':'Turno encerrado. Você pode descansar um pouco. 🌱');
+}
+function moveTask(id,delta){
+ const list=todaysTasks(),t=list.find(x=>x.id===id);if(!t)return;
+ const same=list.filter(x=>(x.group||'main')===(t.group||'main') && taskShift(x)===taskShift(t));
+ const idx=same.findIndex(x=>x.id===id),to=idx+delta;if(to<0||to>=same.length)return;
+ [same[idx],same[to]]=[same[to],same[idx]];
+ const ids=same.map(x=>x.id),order=db.taskOrder.global||[];
+ db.taskOrder.global=[...order.filter(x=>!ids.includes(x)),...ids];
+ save();renderTasks();
+}
+function deleteTask(id){
+ const t=todaysTasks().find(x=>x.id===id);if(!t)return;
+ if(!confirm(`Ocultar "${t.title}" desta data? Você poderá restaurá-la depois.`))return;
+ if(id.startsWith('custom_'))db.customTasks=db.customTasks.filter(x=>x.id!==id);
+ else{db.hiddenTasks[dayKey()]??=[];if(!db.hiddenTasks[dayKey()].includes(id))db.hiddenTasks[dayKey()].push(id)}
+ save();log(`Tarefa removida da agenda: ${t.title}`);renderTasks();
+}
+let evidenceTaskId=null,evidenceFile=null;
+const evidenceDBName='ziaEvidenceDB';
+function openEvidenceDB(){if(!window.indexedDB)return Promise.reject(new Error('Armazenamento de fotos indisponível neste navegador.'));return new Promise((resolve,reject)=>{const req=indexedDB.open(evidenceDBName,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('photos'))req.result.createObjectStore('photos',{keyPath:'key'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+async function putEvidence(record){const d=await openEvidenceDB();return new Promise((resolve,reject)=>{const tx=d.transaction('photos','readwrite');tx.objectStore('photos').put(record);tx.oncomplete=()=>{d.close();resolve()};tx.onerror=()=>{d.close();reject(tx.error)}})}
+async function getEvidence(key){const d=await openEvidenceDB();return new Promise((resolve,reject)=>{const r=d.transaction('photos','readonly').objectStore('photos').get(key);r.onsuccess=()=>{d.close();resolve(r.result||null)};r.onerror=()=>{d.close();reject(r.error)}})}
+async function getAllEvidence(){const d=await openEvidenceDB();return new Promise((resolve,reject)=>{const r=d.transaction('photos','readonly').objectStore('photos').getAll();r.onsuccess=()=>{d.close();resolve(r.result||[])};r.onerror=()=>{d.close();reject(r.error)}})}
+async function listEvidenceForDay(k){
+ try{const d=await openEvidenceDB();return await new Promise((resolve,reject)=>{const r=d.transaction('photos','readonly').objectStore('photos').getAll();r.onsuccess=()=>{d.close();resolve(r.result.filter(x=>x.date===k))};r.onerror=()=>{d.close();reject(r.error)}})}catch(e){return []}
+}
+async function openEvidence(id){
+ const t=todaysTasks().find(x=>x.id===id);if(!t)return;
+ evidenceTaskId=id;evidenceFile=null;$('evidenceTaskName').textContent=t.title;$('evidenceInput').value='';$('evidencePreview').src='';$('evidencePreview').classList.add('hidden');$('evidenceModal').classList.remove('hidden');
+}
+async function saveEvidencePhoto(){
+ if(!evidenceTaskId||!evidenceFile)return alert('Escolha uma foto primeiro.');
+ try{
+  const encoded=await imageToBase64(evidenceFile),key=`${dayKey()}__${evidenceTaskId}__${Date.now()}`;
+  await putEvidence({key,date:dayKey(),taskId:evidenceTaskId,name:evidenceFile.name,dataUrl:'data:image/jpeg;base64,'+encoded.imageBase64,createdAt:new Date().toISOString()});
+  log(`Foto anexada à tarefa: ${todaysTasks().find(t=>t.id===evidenceTaskId)?.title||evidenceTaskId}`);
+  $('evidenceModal').classList.add('hidden');renderTasks();reply('Foto salva como evidência desta atividade.'); 
+ }catch(err){alert('Não consegui salvar a foto neste aparelho. Verifique o espaço disponível e tente novamente.')}
+}
+async function renderEvidence(){
+ const requestedDay=dayKey();
+ const photos=await listEvidenceForDay(requestedDay);
+ if(requestedDay!==dayKey())return;
+ document.querySelectorAll('[data-task]').forEach(row=>{
+  const id=row.dataset.task,items=photos.filter(p=>p.taskId===id);
+  const old=row.querySelector('.evidence-strip');if(old)old.remove();
+  if(items.length){const strip=document.createElement('div');strip.className='evidence-strip';strip.innerHTML=items.map(p=>`<img class="evidence-thumb" data-view-evidence="${esc(p.key)}" src="${p.dataUrl}" alt="Evidência da tarefa">`).join('');row.querySelector('.taskmain')?.append(strip)}
+ });
+}
+
 function todaysTasks(){
  let d=dateObj().getDay(),k=dayKey(),base=[];
  if(d!==0&&d!==6)base=defaults.filter(t=>!t.weekly);
@@ -604,20 +621,30 @@ function taskHtml(t){return `<div class="task" data-task="${esc(t.id)}" data-gro
 <button class="draghandle" data-drag="${esc(t.id)}" aria-label="Arrastar tarefa">↕</button>
 <button class="check ${t.done?'done':''}" data-check="${esc(t.id)}">${t.done?'✓':''}</button>
 <div class="taskmain"><div class="tasktitle" style="${t.done?'text-decoration:line-through;color:#777':''}">${esc(t.title)}</div><div class="taskmeta">${esc(t.time||'Sem horário')} · ${esc(t.kind||'Adicional')}</div>${t.done?'<span class="pill">Concluída</span>':''}</div>
-<div class="tasktools"><button class="mini" data-edit-task="${esc(t.id)}">✎</button>${t.id.startsWith('custom_')?`<button class="mini" data-delete-task="${esc(t.id)}">×</button>`:''}</div></div>`}
+<div class="tasktools"><button class="mini" data-move-task="${esc(t.id)}" data-delta="-1" aria-label="Mover para cima">↑</button><button class="mini" data-move-task="${esc(t.id)}" data-delta="1" aria-label="Mover para baixo">↓</button><button class="mini task-photo" data-photo-task="${esc(t.id)}" aria-label="Adicionar foto">▧</button><button class="mini" data-edit-task="${esc(t.id)}" aria-label="Editar">✎</button><button class="mini" data-delete-task="${esc(t.id)}" aria-label="Excluir">×</button></div></div>`}
 function renderTasks(){
-  renderCalendar();
-  $('todayLabel').textContent=selectedDate.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
+ renderCalendar();renderShiftPanel();
+ $('todayLabel').textContent=selectedDate.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
  const ts=todaysTasks(),done=ts.filter(t=>t.done).length;
+ const apps=todayAppointments(),role=saturdayRole(),ex=dayException();
+ const flex=ts.filter(t=>t.group==='flex');
+ const prioritizeFlex=ex.type==='extra'||(apps.length>0&&ex.type!=='cancelled');
  $('progress').textContent=`${done} de ${ts.length} concluídas`;
- for(const [id,g] of [['tasks','main'],['flexTasks','flex']]){let group=ts.filter(t=>(t.group||'main')===g);$(id).innerHTML=group.length?group.map(taskHtml).join(''):'<div class="empty">Nenhuma tarefa nesta seção.</div>'}
- let n=ts.find(t=>!t.done);$('nextTask').innerHTML=n?`<div class="tasktitle">${esc(n.title)}</div><div class="taskmeta">${esc(n.time)}</div><button class="secondary" style="margin-top:10px" data-check="${esc(n.id)}">Marcar como concluída</button>`:'Tudo concluído por aqui. 🌱';
- const apps=todayAppointments(),role=saturdayRole();
- $('planningCard').innerHTML=`<strong>${apps.length?'Atenção: tarde com atendimento':'Planejamento de hoje'}</strong><br>${apps.length?`Há ${apps.length} atendimento(s) previsto(s) à tarde. Priorize clientes, coletas e tarefas obrigatórias. Se houver mais pessoas pela manhã, tente adiantar limpeza e estoque.`:'Prioridade: clientes, coletas e tarefas obrigatórias. Faça as tarefas flexíveis apenas quando houver disponibilidade.'}${role?`<br><br><strong>Escala de sábado:</strong> ${esc(role)}.`:''}`;
+ const morning=ts.filter(t=>(t.group!=='flex'&&taskShift(t)==='morning')||(prioritizeFlex&&t.group==='flex'));
+ const afternoon=ts.filter(t=>t.group!=='flex'&&taskShift(t)==='afternoon');
+ $('tasks').innerHTML=morning.length?morning.map(taskHtml).join(''):'<div class="empty">Nenhuma tarefa da manhã.</div>';
+ $('afternoonTasks').innerHTML=afternoon.length?afternoon.map(taskHtml).join(''):'<div class="empty">Nenhuma tarefa da tarde.</div>';
+ $('flexTasks').innerHTML=prioritizeFlex?'<div class="empty">As tarefas flexíveis foram antecipadas para a manhã devido ao atendimento da tarde.</div>':(flex.length?flex.map(taskHtml).join(''):'<div class="empty">Nenhuma tarefa nesta seção.</div>');
+ let n=ts.find(t=>!t.done);
+ $('nextTask').innerHTML=n?`<div class="tasktitle">${esc(n.title)}</div><div class="taskmeta">${esc(n.time)}</div><button class="primary" style="margin-top:10px" data-check="${esc(n.id)}">Concluir e avançar</button>`:'Tudo concluído por aqui. 🌱';
+ $('planningCard').innerHTML=`<strong>${ex.type==='cancelled'?'Tarde liberada':ex.type==='extra'?'Atendimento extra':apps.length?'Atenção: tarde com atendimento':'Planejamento de hoje'}</strong><br>${ex.type==='cancelled'?'O profissional desmarcou. Distribua as tarefas flexíveis ao longo do dia.':ex.type==='extra'?'Há uma demanda extra à tarde. Priorize tarefas flexíveis pela manhã.':apps.length?`Há ${apps.length} atendimento(s) previsto(s) à tarde. Priorize clientes, coletas e tarefas obrigatórias. Se houver mais pessoas pela manhã, tente adiantar limpeza e estoque.`:'Prioridade: clientes, coletas e tarefas obrigatórias. Faça as tarefas flexíveis apenas quando houver disponibilidade.'}${role?`<br><br><strong>Escala de sábado:</strong> ${esc(role)}.`:''}`;
  $('appointments').innerHTML=db.appointments.length?db.appointments.map(a=>`<div class="task"><div class="taskmain"><div class="tasktitle">${esc(a.name)}</div><div class="taskmeta">${weekdays[a.day]} à tarde · ${a.frequency==='weekly'?'Toda semana':'A cada 15 dias'}${a.frequency==='biweekly'?' · início '+esc(a.startDate):''}</div></div><button class="mini" data-edit-appointment="${a.id}">Editar</button><button class="mini" data-delete-appointment="${a.id}">×</button></div>`).join(''):'<div class="empty">Cadastre os profissionais que atendem à tarde. A Zia avisará quando adiantar tarefas flexíveis.</div>';
- $('dayNote').value=db.dayNotes[dayKey()]||'';bindDrag();
-$('pendingCount').textContent=`${db.pendingTasks.length} ${db.pendingTasks.length===1?'tarefa':'tarefas'}`;
-$('pendingTasks').innerHTML=db.pendingTasks.length?db.pendingTasks.map(t=>`<div class="task"><div class="taskmain"><div class="tasktitle">${esc(t.title)}</div><div class="taskmeta">${esc(t.note||'Adiada')}</div></div></div>`).join(''):'Nenhuma pendência por enquanto. 🌱';
+ $('dayNote').value=db.dayNotes[dayKey()]||'';
+ $('pendingCount').textContent=`${db.pendingTasks.length} ${db.pendingTasks.length===1?'tarefa':'tarefas'}`;
+ $('pendingTasks').innerHTML=db.pendingTasks.length?db.pendingTasks.map(t=>`<div class="task"><div class="taskmain"><div class="tasktitle">${esc(t.title)}</div><div class="taskmeta">${esc(t.note||'Adiada')}</div></div></div>`).join(''):'Nenhuma pendência por enquanto. 🌱';
+ const hidden=(db.hiddenTasks[dayKey()]||[]);
+ $('hiddenTaskRestore').innerHTML=hidden.length?`Tarefas ocultadas: ${hidden.map(id=>{const t=defaults.find(x=>x.id===id);return t?`<button class="mini" data-restore-task="${esc(id)}">Restaurar ${esc(t.title)}</button>`:''}).join(' ')}`:'';
+ bindDrag();renderEvidence();
 }
 function bindDrag(){
  document.querySelectorAll('[data-drag]').forEach(h=>{
@@ -677,7 +704,7 @@ function bindDrag(){
  });
 }
 function renderStock(){
- $('stockList').innerHTML=db.materials.map(m=>`<div class="stockrow"><div class="stockname">${esc(m.name)}<div class="taskmeta">${esc(m.certainty||'Estimado')}</div></div><div style="text-align:right"><div class="stocknum">${m.qty}</div><div class="stockunit">${esc(m.unit||'unidades')}</div></div><button class="smallbtn" data-correct="${m.id}">Editar</button></div>`).join('');
+ $('stockList').innerHTML=db.materials.map(m=>`<div class="stockrow"><div class="stockname">${esc(m.name)}<div class="taskmeta">${esc(m.certainty||'Estimado')}</div></div><div style="text-align:right"><div class="stocknum">${m.qty}</div><div class="stockunit">${esc(m.unit||'unidades')}</div></div><div class="stock-actions"><button data-stock-change="${m.id}" data-amount="-1" aria-label="Diminuir">−</button><button data-stock-change="${m.id}" data-amount="1" aria-label="Aumentar">+</button><button class="smallbtn" data-correct="${m.id}">Editar</button></div></div>`).join('');
  $('movementMaterial').innerHTML=db.materials.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('');
 }
 function renderHistory(){$('historyList').innerHTML=db.history.length?db.history.slice(0,150).map(h=>`<div class="task"><div class="taskmain">${esc(h.msg)}<div class="taskmeta">${new Date(h.at).toLocaleString('pt-BR')}</div></div></div>`).join(''):'<div class="empty">Ainda não há registros.</div>'}
@@ -695,8 +722,9 @@ function complete(id){
  let t=todaysTasks().find(x=>x.id===id);if(!t)return;
  if(t.weekly){db.weeklyCompletions[weekKey()]??={};db.weeklyCompletions[weekKey()][id]=!db.weeklyCompletions[weekKey()][id]}
  else{db.completions[dayKey()]??={};db.completions[dayKey()][id]=!db.completions[dayKey()][id]}
- save();log(`${t.done?'Reaberta':'Concluída'}: ${t.title}`);renderTasks();
- const done=!!(t.weekly?weeklyDone(id):(db.completions[dayKey()]||{})[id]);reply(done?`Boa! Mais uma resolvida: ${t.title}.`:`Tudo bem, reabri ${t.title}.`);
+ save();
+ const done=!!(t.weekly?weeklyDone(id):(db.completions[dayKey()]||{})[id]);
+ log(`${done?'Concluída':'Reaberta'}: ${t.title}`);renderTasks();reply(done?`Boa! Mais uma resolvida: ${t.title}.`:`Tudo bem, reabri ${t.title}.`);
 }
 function addTask(group='main'){
  let title=prompt('O que você precisa fazer hoje?');if(!title?.trim())return;
@@ -757,9 +785,19 @@ selectedDate=new Date(day.dataset.calendarDate+'T12:00:00');
 renderTasks();
 return;
 }
+
+ let restore=e.target.closest('[data-restore-task]');if(restore){db.hiddenTasks[dayKey()]=(db.hiddenTasks[dayKey()]||[]).filter(id=>id!==restore.dataset.restoreTask);save();renderTasks();return}
+ let shiftStart=e.target.closest('[data-shift-start]');if(shiftStart){setShift(shiftStart.dataset.shiftStart,'start');return}
+ let shiftEnd=e.target.closest('[data-shift-end]');if(shiftEnd){setShift(shiftEnd.dataset.shiftEnd,'end');return}
+ let exception=e.target.closest('[data-exception]');if(exception){const type=exception.dataset.exception;dayException().type=type==='clear'?'':type;dayException().note='';save();renderTasks();log(type==='clear'?'Ajuste da agenda removido.':type==='cancelled'?'Profissional desmarcou.':'Atendimento extra registrado.');return}
+ let mover=e.target.closest('[data-move-task]');if(mover){moveTask(mover.dataset.moveTask,Number(mover.dataset.delta));return}
+ let photoTask=e.target.closest('[data-photo-task]');if(photoTask){openEvidence(photoTask.dataset.photoTask);return}
+ let view=e.target.closest('[data-view-evidence]');if(view){getEvidence(view.dataset.viewEvidence).then(p=>{if(p){$('viewerImage').src=p.dataUrl;$('imageViewer').classList.remove('hidden')}});return}
+ let stockChange=e.target.closest('[data-stock-change]');if(stockChange){const m=db.materials.find(x=>x.id===stockChange.dataset.stockChange),delta=Number(stockChange.dataset.amount);if(m){if(delta<0&&m.qty<1){reply('O saldo já está zerado.');return}m.qty+=delta;m.certainty='Saldo atualizado manualmente';db.movements.unshift({at:new Date().toISOString(),material:m.id,type:delta>0?'in':'out',qty:1});save();log(`${delta>0?'Entrada':'Consumo'} rápida: ${m.name}, 1 unidade; saldo ${m.qty}.`);renderStock()}return}
+
  let c=e.target.closest('[data-check]');if(c)complete(c.dataset.check);
  let et=e.target.closest('[data-edit-task]');if(et)editTask(et.dataset.editTask);
- let dt=e.target.closest('[data-delete-task]');if(dt&&confirm('Excluir esta tarefa de hoje?')){db.customTasks=db.customTasks.filter(t=>t.id!==dt.dataset.deleteTask);save();renderTasks()}
+ let dt=e.target.closest('[data-delete-task]');if(dt)deleteTask(dt.dataset.deleteTask)
  let ea=e.target.closest('[data-edit-appointment]');if(ea)editAppointment(ea.dataset.editAppointment);
  let da=e.target.closest('[data-delete-appointment]');if(da&&confirm('Excluir este atendimento?')){db.appointments=db.appointments.filter(a=>a.id!==da.dataset.deleteAppointment);save();renderTasks()}
  let ed=e.target.closest('[data-correct]');if(ed){let m=db.materials.find(x=>x.id===ed.dataset.correct),v=prompt(`Saldo físico conferido de ${m.name}:`,m.qty);if(v!==null&&v.trim()!==''&&Number(v)>=0){let old=m.qty;m.qty=Number(v);m.certainty='Contagem física confirmada';save();log(`Correção: ${m.name}, de ${old} para ${m.qty}.`);renderStock();reply(`Saldo atualizado para ${m.qty} ${m.unit}.`)}}
@@ -778,8 +816,8 @@ document.querySelectorAll('[data-command]').forEach(b=>b.onclick=()=>command(b.d
 $('addTaskBtn').onclick=()=>addTask('main');$('addFlexibleBtn').onclick=()=>addTask('flex');$('editRoutineBtn').onclick=editRoutine;$('addAppointmentBtn').onclick=addAppointment;
 $('saveNoteBtn').onclick=()=>{db.dayNotes[dayKey()]=$('dayNote').value.trim();save();log('Ocorrência de hoje atualizada.');reply('Salvei a ocorrência somente para hoje.')};
 $('addMaterialBtn').onclick=()=>{let name=prompt('Nome do material:');if(!name?.trim())return;let qty=Number(prompt('Saldo inicial (0 se ainda não conferiu):','0'));if(!Number.isFinite(qty)||qty<0)return;db.materials.push({id:'mat_'+Date.now(),name:name.trim(),qty,certainty:'Estimado',unit:'unidades'});save();log(`Material cadastrado: ${name}, saldo ${qty}.`);renderStock()};
-$('saveMovement').onclick=()=>{let m=db.materials.find(x=>x.id===$('movementMaterial').value),type=$('movementType').value,n=Number($('movementQty').value);if(!m||!Number.isFinite(n)||n<0||$('movementQty').value==='')return alert('Escolha material e quantidade válida.');if(type==='in')m.qty+=n;else if(type==='out')m.qty-=n;else{m.qty=n;m.certainty='Contagem física confirmada'}if(type!=='set')m.certainty='Saldo calculado por movimentações';db.movements.unshift({at:new Date().toISOString(),material:m.id,type,qty:n});save();log(`${type==='in'?'Recebimento':type==='out'?'Consumo':'Contagem física'}: ${m.name}, quantidade ${n}; saldo ${m.qty}.`);$('movementQty').value='';renderStock();reply('Movimentação registrada.')};
-function backup(){let blob=new Blob([JSON.stringify({app:'zia',version:4,exportedAt:new Date().toISOString(),data:db},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='zia-backup-'+dayKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);log('Backup exportado.')}
+$('saveMovement').onclick=()=>{let m=db.materials.find(x=>x.id===$('movementMaterial').value),type=$('movementType').value,n=Number($('movementQty').value);if(!m||!Number.isFinite(n)||n<0||$('movementQty').value==='')return alert('Escolha material e quantidade válida.');if(type==='in')m.qty+=n;else if(type==='out'){if(n>m.qty)return alert('O consumo não pode ser maior que o saldo disponível.');m.qty-=n}else{m.qty=n;m.certainty='Contagem física confirmada'}if(type!=='set')m.certainty='Saldo calculado por movimentações';db.movements.unshift({at:new Date().toISOString(),material:m.id,type,qty:n});save();log(`${type==='in'?'Recebimento':type==='out'?'Consumo':'Contagem física'}: ${m.name}, quantidade ${n}; saldo ${m.qty}.`);$('movementQty').value='';renderStock();reply('Movimentação registrada.')};
+async function backup(){let photos=[];try{photos=await getAllEvidence()}catch(e){}let blob=new Blob([JSON.stringify({app:'zia',version:5,exportedAt:new Date().toISOString(),data:db,evidence:photos},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='zia-backup-'+dayKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);log('Backup exportado, incluindo as fotos de evidência disponíveis.')}
 $('backupBtn').onclick=backup;$('exportBtn').onclick=backup;
 $('micBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return reply('O reconhecimento de voz não está disponível neste navegador. Tente Chrome no Android ou digite.');let rec=new SR();rec.lang='pt-BR';rec.interimResults=false;$('micBtn').classList.add('listening');rec.onresult=e=>command(e.results[0][0].transcript);rec.onerror=()=>reply('Não consegui acessar o microfone ou entender. Tente novamente ou digite.');rec.onend=()=>$('micBtn').classList.remove('listening');try{rec.start()}catch(e){$('micBtn').classList.remove('listening');reply('Não consegui iniciar o microfone.')}};
 function loadVoices(){if(!('speechSynthesis'in window))return;availableVoices=speechSynthesis.getVoices();let list=$('voiceSelect');list.innerHTML='';if(!availableVoices.length){list.innerHTML='<option value="">Nenhuma voz disponível ainda</option>';return}
@@ -795,6 +833,10 @@ $('saveVoice').onclick=()=>{db.settings.speechMode=$('speechMode').value;db.sett
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=() => $(b.dataset.close).classList.add('hidden'));
 $('petButton').onclick=()=>{showPet('Opa! 🌱 Quer consultar tarefas, registrar algo ou conversar comigo?');speak('Opa! Quer consultar tarefas, registrar algo ou conversar comigo?')};
 $('photoBtn').onclick=()=>$('photoInput').click();$('chooseAgain').onclick=()=>$('photoInput').click();
+$('evidenceInput').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!f.type.startsWith('image/'))return alert('Escolha uma imagem.');evidenceFile=f;$('evidencePreview').src=URL.createObjectURL(f);$('evidencePreview').classList.remove('hidden')};
+$('saveEvidence').onclick=saveEvidencePhoto;
+$('cancelEvidence').onclick=()=>$('evidenceModal').classList.add('hidden');
+
 $('photoInput').onchange=e=>{let f=e.target.files?.[0];if(!f)return;if(!f.type.startsWith('image/'))return alert('Escolha uma imagem.');currentImage=f;$('photoPreview').src=URL.createObjectURL(f);$('photoPreview').classList.remove('hidden');$('photoResult').classList.add('hidden');$('photoModal').classList.remove('hidden');$('photoNotes').value='';$('photoQuestion').value='';e.target.value=''};
 async function imageToBase64(file){const bitmap=await createImageBitmap(file),scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(bitmap.width*scale));c.height=Math.max(1,Math.round(bitmap.height*scale));c.getContext('2d').drawImage(bitmap,0,0,c.width,c.height);bitmap.close?.();return {imageBase64:c.toDataURL('image/jpeg',.85).split(',')[1],mimeType:'image/jpeg'}}
 $('analyzePhoto').onclick=async()=>{if(!currentImage)return reply('Escolha uma foto primeiro.');let b=$('analyzePhoto'),question=$('photoQuestion').value.trim()||'Descreva a imagem e destaque as informações visíveis.',notes=$('photoNotes').value.trim();b.disabled=true;b.textContent='Analisando…';$('photoResult').textContent='Enviando imagem para análise…';$('photoResult').classList.remove('hidden');
