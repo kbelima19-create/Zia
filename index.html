@@ -66,15 +66,20 @@ h2{font-size:19px;margin:0 0 12px}
 #settingsModal button:disabled{cursor:not-allowed}
 .preview{width:100%;max-height:300px;object-fit:contain;border-radius:13px}
 .result{white-space:pre-wrap;background:#eeece5;padding:12px;border-radius:12px;margin-top:12px;font-size:14px}
-#petButton{width:82px;height:82px;flex:0 0 82px;border:0;background:transparent;padding:0;cursor:pointer}
-.pet{width:74px;height:74px;animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 4px 3px #0001)}
-@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-5px) rotate(2deg)}}
+#ziaHeader{position:relative;display:flex;align-items:center;justify-content:flex-start;min-height:76px;padding:2px 0 13px;z-index:6}
+#petButton{width:68px;height:68px;flex:0 0 68px;border:0;border-radius:50%;background:transparent;padding:0;cursor:pointer;display:grid;place-items:center;position:relative;z-index:2}
+#petButton:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.pet{width:62px;height:62px;animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 4px 3px #0001)}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4px) rotate(2deg)}}
 .pet.bounce{animation:jump .5s ease}
-@keyframes jump{50%{transform:translateY(-14px) scale(1.08)}}
-.petwrap{position:fixed;right:13px;bottom:88px;z-index:2;display:flex;align-items:flex-end;gap:7px;pointer-events:none}
-.petwrap>*{pointer-events:auto}
-.petbubble{background:var(--control);color:var(--control-text);border:1px solid var(--line);border-radius:15px 15px 3px 15px;padding:9px 11px;font-size:12px;max-width:185px;box-shadow:0 3px 15px #0001}
-@media(max-width:420px){.task{gap:5px}.tasktools{gap:2px}.mini{padding:6px}.greeting{gap:8px}}
+@keyframes jump{50%{transform:translateY(-10px) scale(1.08)}}
+.petbubble{position:absolute;left:75px;top:8px;max-width:min(235px,calc(100vw - 112px));padding:9px 12px;border-radius:15px 15px 15px 4px;background:var(--control);color:var(--control-text);border:1px solid var(--line);font-size:13px;line-height:1.35;box-shadow:0 4px 16px #0002;opacity:1;transform:translateY(0);transition:opacity .35s ease,transform .35s ease;z-index:1}
+.petbubble:before{content:"";position:absolute;left:-7px;top:17px;width:12px;height:12px;background:var(--control);border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
+.petbubble.hidden{display:block!important;opacity:0;pointer-events:none;transform:translateY(-5px)}
+#petMenu{position:absolute;left:6px;top:72px;min-width:180px;padding:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px #0002;z-index:8}
+#petMenu .pet-menu-name{font-weight:750;padding:3px 8px 8px;font-size:14px}
+#petMenu button{display:block;width:100%;text-align:left;padding:9px 10px;border-radius:9px;background:var(--soft);font-size:13px;margin-top:4px}
+@media(max-width:420px){.task{gap:5px}.tasktools{gap:2px}.mini{padding:6px}#petButton{width:62px;height:62px;flex-basis:62px}.pet{width:58px;height:58px}.petbubble{left:68px;top:5px}}
 
 /* ===== CALENDÁRIO SEMANAL DA ZIA ===== */
 
@@ -207,7 +212,17 @@ h2{font-size:19px;margin:0 0 12px}
 .task-photo{font-size:13px}
 .evidence-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
 .evidence-thumb{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid var(--line);cursor:pointer}
-.stock-actions{display:flex;align-items:center;gap:5px}
+.stock-actions{display:flex;align-items:center;gap:5px;flex:0 0 auto}
+.stockrow{padding:14px 10px;gap:10px;border-radius:10px}
+.stockname{padding-left:3px;overflow-wrap:anywhere}
+.stockmenu{position:relative;flex:0 0 auto}
+.stockmenu summary{list-style:none;cursor:pointer;width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:var(--soft);font-size:20px;line-height:1}
+.stockmenu summary::-webkit-details-marker{display:none}
+.stockmenuitems{display:none;position:absolute;right:0;top:36px;z-index:25;min-width:170px;max-height:min(70vh,420px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:7px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 5px 20px #0002;gap:4px}
+.stockmenu[open] .stockmenuitems{display:grid}
+.stockmenuitems button{width:100%;text-align:left;padding:9px 10px;border-radius:8px;background:var(--soft);font-size:13px;color:var(--ink)}
+.saturday-role-control{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-bottom:10px;text-align:left}
+.saturday-role-control select{max-width:58%;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--control);color:var(--control-text)}
 .stock-actions button{min-width:31px;height:31px;border-radius:9px;background:#edf1e9;color:#405b43;font-weight:700}
 .stock-actions .smallbtn{background:#f0eee8;color:var(--ink);font-weight:400}
 .exception-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
@@ -245,8 +260,9 @@ body[data-period="night"] .daynav-day{background:#3b454b;color:#f1f0e9;border-co
 body[data-period="night"] .daynav-day.active{background:#52675b;color:#fff}
 body[data-period="night"] .pill{background:#3b5141;color:#c9e2c8}
 body[data-period="night"] .taskmenuitems{background:#2d363d;border-color:#53616a}
-body[data-period="night"] .taskmenuitems button{background:#3a464e;color:#f2f4f0}
-@media(max-width:390px){.shift-controls{grid-template-columns:1fr}.stockrow{gap:6px}.stockname{font-size:13px}.stock-actions button{min-width:28px}}
+body[data-period="night"] .taskmenuitems button,body[data-period="night"] .stockmenuitems button{background:#3a464e;color:#f2f4f0}
+body[data-period="night"] .stockmenuitems{background:#2d363d;border-color:#53616a}
+@media(max-width:390px){.shift-controls{grid-template-columns:1fr}.stockrow{gap:6px;padding-left:8px;padding-right:8px}.stockname{font-size:13px}.stock-actions button{min-width:28px}.taskmenuitems,.stockmenuitems{max-height:65vh;max-width:calc(100vw - 42px)}}
 
 
 .shift-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px;text-align:center}
@@ -259,7 +275,7 @@ body[data-period="night"] .taskmenuitems button{background:#3a464e;color:#f2f4f0
 .taskmenu{position:relative;flex:0 0 auto}
 .taskmenu summary{list-style:none;cursor:pointer;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--soft);color:var(--ink);font-size:20px}
 .taskmenu summary::-webkit-details-marker{display:none}
-.taskmenuitems{display:none;position:absolute;right:0;top:38px;z-index:8;min-width:160px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 5px 20px #0002;gap:4px}
+.taskmenuitems{display:none;position:absolute;right:0;top:38px;z-index:20;min-width:180px;max-height:min(70vh,420px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:7px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 5px 20px #0002;gap:4px}
 .taskmenu[open] .taskmenuitems{display:grid}
 .taskmenuitems button{width:100%;text-align:left;padding:9px 10px;border-radius:8px;background:var(--soft);font-size:13px;color:var(--ink)}
 .rest-screen{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:25px 18px;text-align:center;margin:12px 0}
@@ -271,32 +287,68 @@ body[data-period="night"] .taskmenuitems button{background:#3a464e;color:#f2f4f0
 @keyframes float-z{0%,100%{opacity:.45;transform:translateY(2px)}50%{opacity:1;transform:translateY(-4px)}}
 .petbubble{cursor:pointer;border:1px solid var(--line);font:inherit;text-align:left}
 @media(max-width:420px){.task{gap:6px}.tasktitle{line-height:1.35}.taskmenuitems{min-width:148px}}
+
+/* Menus de três pontos: camada flutuante independente dos cards */
+.taskmenuitems,.stockmenuitems{
+  display:none;position:fixed!important;top:0;left:0;right:auto;z-index:2147483000!important;
+  width:max-content;min-width:180px;max-width:calc(100vw - 24px);
+  max-height:220px!important;overflow-y:auto!important;overflow-x:hidden;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  padding:7px;background:var(--card);color:var(--ink);
+  border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 8px 28px #0003;gap:4px;box-sizing:border-box;
+}
+.taskmenuitems.zia-menu-portal,.stockmenuitems.zia-menu-portal{display:grid!important}
+
+
+
+/* ===== CABEÇALHO UNIFICADO: MASCOTE + CALENDÁRIO + TURNO ===== */
+#ziaTopUnified{
+  background:#eeece6;
+  border:1px solid #e0ddd4;
+  border-radius:22px;
+  padding:10px 12px 12px;
+  margin:0 0 14px;
+  box-shadow:0 3px 12px #302f2b0a;
+}
+#ziaTopUnified #ziaHeader{
+  min-height:66px;
+  padding:0 0 5px;
+  margin:0;
+}
+#ziaTopUnified #calendarCard{
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  padding:7px 2px 10px;
+  margin:0;
+}
+#ziaTopUnified #calendarCard .sectionhead{margin-bottom:10px}
+#ziaTopUnified #shiftPanel{margin:0}
+#ziaTopUnified #shiftPanel .shift-card{
+  margin:0;
+  background:#f8f7f3;
+  border-color:#e3e0d7;
+}
+#ziaTopUnified #shiftPanel .agenda-adjust{margin-bottom:0}
+body[data-period="night"] #ziaTopUnified{
+  background:#303a40;
+  border-color:#4b5960;
+  box-shadow:0 3px 12px #0002;
+}
+body[data-period="night"] #ziaTopUnified #shiftPanel .shift-card{
+  background:#354149;
+  border-color:#53616a;
+}
+@media(max-width:420px){
+  #ziaTopUnified{padding:8px 9px 10px;border-radius:19px}
+  #ziaTopUnified #calendarCard{padding:5px 0 8px}
+}
+
 </style>
 </head>
 <body>
 <div class="app">
-<header>
- <div class="brand"><h1>zia <span style="font-size:16px">✳</span></h1><div class="sub">Sua assistente de trabalho</div></div>
-</header>
-
-<div class="greeting">
- <button id="petButton" aria-label="Conversar com a criaturinha">
-  <svg class="pet" id="pet" viewBox="0 0 100 100" role="img" aria-label="Criaturinha da Zia">
-   <defs><linearGradient id="bodygrad" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d7e5ce"/><stop offset="1" stop-color="#a6c5a0"/></linearGradient></defs>
-   <path d="M47 20 Q32 3 25 15 Q37 14 39 29" fill="#71996d"/>
-   <path d="M50 25 Q53 4 70 10 Q63 24 55 29" fill="#93b987"/>
-   <ellipse cx="50" cy="57" rx="34" ry="35" fill="url(#bodygrad)" stroke="#789a74" stroke-width="2"/>
-   <ellipse cx="38" cy="53" rx="4" ry="6" fill="#343b32"/>
-   <ellipse cx="62" cy="53" rx="4" ry="6" fill="#343b32"/>
-   <circle cx="39" cy="51" r="1.5" fill="white"/><circle cx="63" cy="51" r="1.5" fill="white"/>
-   <ellipse cx="28" cy="62" rx="6" ry="3.5" fill="#e8a8a0" opacity=".8"/>
-   <ellipse cx="72" cy="62" rx="6" ry="3.5" fill="#e8a8a0" opacity=".8"/>
-   <path d="M43 66 Q50 73 57 66" fill="none" stroke="#526d4e" stroke-width="2.5" stroke-linecap="round"/>
-   <path d="M25 82 Q50 92 75 82" fill="none" stroke="#789a74" stroke-width="2"/>
-  </svg>
- </button>
- <div style="flex:1"><div class="eyebrow" id="todayLabel">SUA ROTINA</div><h2>Oi, estou aqui!</h2><p id="greetingText">Vamos organizar o dia juntas. Toque na criaturinha para conversar.</p></div>
-</div>
 
 <div id="chatArea"></div>
 <div class="nav">
@@ -305,6 +357,28 @@ body[data-period="night"] .taskmenuitems button{background:#3a464e;color:#f2f4f0
 
 
 <section id="home">
+
+  <div id="ziaTopUnified">
+<header id="ziaHeader">
+ <button id="petButton" aria-label="Abrir menu da Zia" aria-expanded="false" aria-controls="petMenu">
+  <svg class="pet" id="pet" viewBox="0 0 100 100" role="img" aria-label="Personagem da Zia">
+   <defs><linearGradient id="bodygrad" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d7e5ce"/><stop offset="1" stop-color="#a6c5a0"/></linearGradient></defs>
+   <path d="M47 20 Q32 3 25 15 Q37 14 39 29" fill="#71996d"/>
+   <path d="M50 25 Q53 4 70 10 Q63 24 55 29" fill="#93b987"/>
+   <ellipse cx="50" cy="57" rx="34" ry="35" fill="url(#bodygrad)" stroke="#789a74" stroke-width="2"/>
+   <ellipse cx="38" cy="53" rx="4" ry="6" fill="#343b32"/><ellipse cx="62" cy="53" rx="4" ry="6" fill="#343b32"/>
+   <circle cx="39" cy="51" r="1.5" fill="white"/><circle cx="63" cy="51" r="1.5" fill="white"/>
+   <ellipse cx="28" cy="62" rx="6" ry="3.5" fill="#e8a8a0" opacity=".8"/><ellipse cx="72" cy="62" rx="6" ry="3.5" fill="#e8a8a0" opacity=".8"/>
+   <path d="M43 66 Q50 73 57 66" fill="none" stroke="#526d4e" stroke-width="2.5" stroke-linecap="round"/><path d="M25 82 Q50 92 75 82" fill="none" stroke="#789a74" stroke-width="2"/>
+  </svg>
+ </button>
+ <div id="petBubbleClose" class="petbubble hidden" role="status" aria-live="polite">Oi, estou aqui!</div>
+ <div id="petMenu" class="hidden" role="menu" aria-label="Menu da Zia">
+  <div class="pet-menu-name">Zia 🌱</div>
+  <button id="petSettingsBtn" type="button" role="menuitem">⚙ Configurações</button>
+ </div>
+ <span id="todayLabel" class="hidden">SUA ROTINA</span>
+</header>
 
   <!-- CALENDÁRIO SEMANAL -->
   <div class="card" id="calendarCard">
@@ -320,6 +394,9 @@ body[data-period="night"] .taskmenuitems button{background:#3a464e;color:#f2f4f0
 
   <!-- CONTROLES DOS TURNOS -->
   <div id="shiftPanel"></div>
+  </div>
+
+
   <div id="restScreen" class="rest-screen hidden"></div>
 
   <!-- CONTEÚDO PRINCIPAL -->
@@ -417,14 +494,13 @@ body[data-period="night"] .taskmenuitems button{background:#3a464e;color:#f2f4f0
 
 
 <section id="stock" class="hidden">
- <div class="notice">Ajuste os saldos diretamente pelos botões +/− ou em Editar. Você também pode cadastrar e excluir materiais.</div>
+ <div class="notice">Ajuste os saldos pelos botões +/−. Para editar, renomear ou excluir, use o menu ⋮ de cada material.</div>
  <div class="card"><div class="sectionhead"><h2>Materiais</h2><button class="smallbtn" id="addMaterialBtn">＋ Material</button></div><div id="stockList"></div></div>
 </section>
 <section id="history" class="hidden"><div class="card"><div class="sectionhead"><h2>Histórico</h2><button class="smallbtn" id="exportBtn">Exportar</button></div><div id="historyList"></div></div></section>
 <p class="footerhint">Zia · Dados guardados neste navegador. Faça backups e não registre dados identificáveis de pacientes.</p>
 </div>
 
-<div class="petwrap"><button id="petBubbleClose" class="petbubble" aria-label="Fechar mensagem da Zia">Oi! Toque em mim quando precisar. 🌱　×</button></div>
 <div class="composer"><div class="composeinner"><input id="commandInput" placeholder="Digite um comando para a Zia…" autocomplete="off"><button class="photo" id="photoBtn" title="Escolher foto">▧</button><button class="send" id="sendBtn" aria-label="Enviar">➤</button><input id="photoInput" type="file" accept="image/*" capture="environment" class="hidden"></div></div>
 
 <div id="settingsModal" class="modal hidden"><div class="modalbox">
@@ -528,7 +604,8 @@ function renderCalendar() {
       a => appointmentOccurs(a, key)
     );
 
-    const hasItems = hasCompletion || hasAppointment;
+    const hasSaturdayScale = date.getDay()===6;
+    const hasItems = hasCompletion || hasAppointment || hasSaturdayScale;
 
     html += `
       <button
@@ -569,16 +646,16 @@ const defaults=[
 ];
 function fresh(){return {customTasks:[],materials:initialMaterials.map(x=>({...x})),history:[],completions:{},movements:[],appointments:[],routineOverrides:{},hiddenTasks:{},taskOrder:{},dayNotes:{},weeklyCompletions:{},shiftStates:{},dayExceptions:{},settings:{speechMode:'all',voiceURI:'',rate:.92,pitch:1.08,microphoneEnabled:true}}}
 let db;try{db=JSON.parse(localStorage.getItem('ziaDB'))||fresh()}catch(e){db=fresh()}
-for(const k of ['customTasks','materials','history','completions','movements','appointments','routineOverrides','hiddenTasks','taskOrder','dayNotes','weeklyCompletions','shiftStates','dayExceptions'])db[k]??=(k==='materials'?initialMaterials.map(x=>({...x})):['appointments','customTasks','history','movements'].includes(k)?[]:{});
+for(const k of ['customTasks','materials','history','completions','movements','appointments','routineOverrides','hiddenTasks','taskOrder','dayNotes','weeklyCompletions','shiftStates','dayExceptions','saturdayOverrides'])db[k]??=(k==='materials'?initialMaterials.map(x=>({...x})):['appointments','customTasks','history','movements'].includes(k)?[]:{});
 db.pendingTasks??=[];
 db.carryoverTasks??={};
-db.shiftStates??={};db.dayExceptions??={};
+db.shiftStates??={};db.dayExceptions??={};db.saturdayOverrides??={};
 db.settings??={speechMode:'all',voiceURI:'',rate:.92,pitch:1.08,microphoneEnabled:true};db.settings.microphoneEnabled??=true;
 let currentImage=null,availableVoices=[];
 function save(){localStorage.setItem('ziaDB',JSON.stringify(db))}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function log(msg,type='info'){db.history.unshift({at:new Date().toISOString(),msg,type});save();renderHistory()}
-function saturdayRole(k=dayKey()){let d=dateObj(k);if(d.getDay()!==6)return null;let start=dateObj('2026-10-24'),weeks=Math.floor((d-start)/604800000);if(weeks<0)return 'Antes da escala definida';return ['Recepção','Área de coleta','Folga'][weeks%3]}
+function saturdayRole(k=dayKey()){let d=dateObj(k);if(d.getDay()!==6)return null;const override=db.saturdayOverrides?.[k];if(override)return override;let start=dateObj('2026-10-24'),weeks=Math.floor((d-start)/604800000);if(weeks<0)return 'Antes da escala definida';return ['Recepção','Área de coleta','Folga'][weeks%3]}
 function appointmentOccurs(a,k=dayKey()){let d=dateObj(k);if(d.getDay()!==Number(a.day))return false;if(a.frequency==='weekly')return true;if(d<dateObj(a.startDate||k))return false;return Math.round((dateObj(weekKey(k))-dateObj(weekKey(a.startDate||k)))/604800000)%2===0}
 function todayAppointments(k=dayKey()){return db.appointments.map((a,i)=>({...a,_sequence:Number.isFinite(a.order)?a.order:i})).filter(a=>appointmentOccurs(a,k)).sort((a,b)=>a._sequence-b._sequence)}
 function moveAppointment(id,delta){const current=db.appointments.find(a=>a.id===id);if(!current)return;const same=todayAppointments().filter(a=>a.day===current.day&&a.frequency===current.frequency);const i=same.findIndex(a=>a.id===id),j=i+delta;if(j<0||j>=same.length)return;[same[i],same[j]]=[same[j],same[i]];same.forEach((a,index)=>{const original=db.appointments.find(x=>x.id===a.id);original.order=index});save();renderTasks();}
@@ -592,15 +669,24 @@ function taskShift(t){
 function shiftState(k=dayKey()){db.shiftStates[k]??={morning:false,afternoon:false,morningEnded:false,afternoonEnded:false};return db.shiftStates[k]}
 function dayException(k=dayKey()){db.dayExceptions[k]??={type:'',note:''};return db.dayExceptions[k]}
 function renderShiftPanel(){
- const st=shiftState(),h=new Date().getHours(),isToday=dayKey()===realTodayKey();
- const period=updateDayTheme();
+ const k=dayKey(),isSaturday=dateObj(k).getDay()===6,role=isSaturday?saturdayRole(k):null;
+ const st=shiftState(),period=updateDayTheme(),isToday=k===realTodayKey();
  if(isToday&&period==='night'){$('shiftPanel').innerHTML='';return}
+ if(isSaturday){
+  const roleControl=`<div class="saturday-role-control"><strong>Escala deste sábado</strong><select id="saturdayRoleSelect" aria-label="Selecionar escala de sábado"><option ${role==='Folga'?'selected':''}>Folga</option><option ${role==='Área de coleta'?'selected':''}>Área de coleta</option><option ${role==='Recepção'?'selected':''}>Recepção</option></select></div>`;
+  if(role==='Folga'){
+   $('shiftPanel').innerHTML=`<div class="shift-card">${roleControl}<div class="shift-status">🌿 Hoje é dia de folga. Nenhuma tarefa de trabalho será exibida.</div></div>`;
+   return;
+  }
+  const ended=st.morningEnded,started=st.morning;
+  $('shiftPanel').innerHTML=`<div class="shift-card">${roleControl}<div class="shift-status">${role==='Recepção'?'🏢':'🧪'} Sábado · ${esc(role)} · expediente até 10h</div>${!started&&!ended?'<button class="primary shift-main-action" data-shift-start="morning">Iniciar turno de sábado</button>':started&&!ended?'<button class="primary shift-main-action" data-shift-end="morning">Encerrar turno de sábado</button>':`<div class="shift-status">Turno encerrado. Bom descanso! 🌱</div>`}</div>`;
+  return;
+ }
  let type=new Date().getHours()<12?'morning':'afternoon';
  if(st.morning&&!st.morningEnded)type='morning';
  else if(st.afternoon&&!st.afternoonEnded)type='afternoon';
  else if(st.morningEnded)type='afternoon';
- const ended=st[type+'Ended'],started=st[type];
- const label=type==='morning'?'manhã':'tarde',emoji=type==='morning'?'☀️':'🌤️';
+ const ended=st[type+'Ended'],started=st[type],label=type==='morning'?'manhã':'tarde',emoji=type==='morning'?'☀️':'🌤️';
  if(!started||ended){
   $('shiftPanel').innerHTML=`<div class="shift-card shift-start-card"><div class="shift-status">${emoji} Seu turno da ${label} está pronto</div><button class="primary shift-main-action" data-shift-start="${type}" ${ended?'disabled':''}>Iniciar turno da ${label}</button></div>`;
  }else{
@@ -676,10 +762,32 @@ async function renderEvidence(){
  });
 }
 
+const saturdayRoutines={
+ 'Recepção':[
+  ['sat_reception_open','Abrir o caixa e iniciar os atendimentos','Início do turno'],
+  ['sat_reception_temp','Aferir e registrar a temperatura da recepção','Por volta das 07:00'],
+  ['sat_reception_route','Fechar o caixa e enviar pela rota','Por volta das 08:30–08:40'],
+  ['sat_reception_confirm','Conferir e enviar as mensagens de confirmação da agenda dos profissionais para segunda-feira','Por volta das 09:00'],
+  ['sat_reception_close','Encerramento: desligar os ar-condicionados, conferir os banheiros, desligar a televisão, recolher as bandeirolas e bater o ponto','Até 10:00']
+ ].map(([id,title,time])=>({id,title,time,kind:'Rotina de sábado',group:'main',shift:'morning',saturday:true})),
+ 'Área de coleta':[
+  ['sat_lab_open','Chegar, ligar o ar-condicionado e o computador','Por volta das 06:00'],
+  ['sat_lab_coffee','Colocar o café na garrafa','Início · por volta das 06:00'],
+  ['sat_lab_plant','Conferir com a colega se a planta precisa de água','Início · por volta das 06:00'],
+  ['sat_lab_collect','Iniciar e realizar as coletas','A partir das 06:05'],
+  ['sat_lab_temp','Aferir e registrar a temperatura da sala de coleta e da geladeira','Por volta das 07:00 · obrigatório'],
+  ['sat_lab_spin','Priorizar a centrifugação do material o mais cedo possível','07:30–08:45'],
+  ['sat_lab_box','Organizar a caixa e liberar o material','08:45–09:15 · liberar até 09:15'],
+  ['sat_lab_counts','Lançar as quantidades no sistema Acredite','Até 09:15'],
+  ['sat_lab_upstairs','No piso superior: desligar os computadores, ligar a centrífuga e programar o café de segunda-feira; depois descer e conferir a parte de baixo','Após a liberação da caixa'],
+  ['sat_lab_demand','Ajustar as atividades conforme a demanda e começar a desligar os computadores da coleta','A partir das 09:30'],
+  ['sat_lab_close','Encerramento: desligar computadores e ar-condicionado, desligar a TV, recolher bandeirolas, conferir banheiros e bater o ponto','09:50–10:00']
+ ].map(([id,title,time])=>({id,title,time,kind:'Rotina de sábado',group:'main',shift:'morning',saturday:true}))
+};
 function todaysTasks(){
  let d=dateObj(dayKey()).getDay(),k=dayKey(),base=[];
  if(d!==0&&d!==6)base=defaults.filter(t=>!t.weekly);
- if(d===6){let role=saturdayRole(k);if(role&&role!=='Folga'&&role!=='Antes da escala definida')base=[{id:'saturday_'+role,title:'Rotina de sábado: '+role,time:'Conforme a escala',kind:'Escala',group:'main'},...defaults.filter(t=>['temp','closing'].includes(t.id))]}
+ if(d===6){let role=saturdayRole(k);if(role&&saturdayRoutines[role])base=saturdayRoutines[role].map(t=>({...t}));}
  base=base.filter(t=>!(db.hiddenTasks[k]||[]).includes(t.id)).map(t=>({...t,...(db.routineOverrides[t.id]||{})}));
  if(d!==0&&d!==6)base.push({...defaults.find(t=>t.id==='stock_weekly')});
  const custom=db.customTasks.filter(t=>t.date===k).map(t=>({...t,group:t.group||'main'}));
@@ -692,18 +800,19 @@ function taskHtml(t){return `<div class="task" data-task="${esc(t.id)}" data-gro
 <button class="draghandle" data-drag="${esc(t.id)}" aria-label="Arrastar tarefa">↕</button>
 <button class="check ${t.done?'done':''}" data-check="${esc(t.id)}">${t.done?'✓':''}</button>
 <div class="taskmain"><div class="tasktitle" style="${t.done?'text-decoration:line-through;color:#777':''}">${esc(t.title)}</div><div class="taskmeta">${esc(t.time||'Sem horário')} · ${esc(t.kind||'Adicional')}</div>${t.done?'<span class="pill">Concluída</span>':''}</div>
-<details class="taskmenu"><summary aria-label="Ações da tarefa">⋮</summary><div class="taskmenuitems"><button data-move-task="${esc(t.id)}" data-delta="-1">↑ Mover para cima</button><button data-move-task="${esc(t.id)}" data-delta="1">↓ Mover para baixo</button><button data-photo-task="${esc(t.id)}">▧ Anexar foto</button><button data-edit-task="${esc(t.id)}">✎ Editar</button><button data-delete-task="${esc(t.id)}">× Excluir</button></div></details></div>`}
+<details class="taskmenu"><summary aria-label="Ações da tarefa">⋮</summary><div class="taskmenuitems"><button data-photo-task="${esc(t.id)}">▧ Anexar foto</button><button data-edit-task="${esc(t.id)}">✎ Editar</button><button data-delete-task="${esc(t.id)}">× Excluir</button></div></details></div>`}
 function renderTasks(){
  renderCalendar();updateDayTheme();
  const selectedKey=dayKey(),isToday=selectedKey===realTodayKey(),period=updateDayTheme(),st=shiftState();
  $('todayLabel').textContent=selectedDate.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
- const resting=isToday&&(period==='night'||st.afternoonEnded);
+ const isSelectedSaturday=dateObj(selectedKey).getDay()===6,selectedRole=isSelectedSaturday?saturdayRole(selectedKey):null;
+ const resting=isToday&&(period==='night'||st.afternoonEnded||(isSelectedSaturday&&st.morningEnded&&selectedRole!=='Folga'));
  $('restScreen').classList.toggle('hidden',!resting);
- document.querySelector('.greeting').classList.toggle('hidden',resting);
+ $('ziaHeader').classList.toggle('hidden',resting);
  document.querySelector('.nav').classList.toggle('hidden',resting);
  document.querySelector('.composer').classList.toggle('hidden',resting);
  $('chatArea').classList.toggle('hidden',resting);
- document.querySelector('.petwrap').classList.toggle('hidden',resting);
+
  if(resting){
   $('shiftPanel').innerHTML='';$('legacyHome').classList.add('hidden');
   $('restScreen').innerHTML=`<svg class="rest-mascot" viewBox="0 0 120 120" role="img" aria-label="Zia dormindo">
@@ -820,11 +929,11 @@ function bindDrag(){
  });
 }
 function renderStock(){
- $('stockList').innerHTML=db.materials.map(m=>`<div class="stockrow"><div class="stockname">${esc(m.name)}<div class="taskmeta">${esc(m.certainty||'Estimado')}</div></div><div style="text-align:right"><div class="stocknum">${m.qty}</div><div class="stockunit">${esc(m.unit||'unidades')}</div></div><div class="stock-actions"><button data-stock-change="${m.id}" data-amount="-1" aria-label="Diminuir">−</button><button data-stock-change="${m.id}" data-amount="1" aria-label="Aumentar">+</button><button class="smallbtn" data-correct="${m.id}">Editar</button><button class="smallbtn" data-delete-material="${m.id}" aria-label="Excluir material">×</button></div></div>`).join('')||'<div class="empty">Nenhum material cadastrado.</div>';
+ $('stockList').innerHTML=db.materials.map(m=>`<div class="stockrow"><div class="stockname">${esc(m.name)}<div class="taskmeta">${esc(m.certainty||'Estimado')}</div></div><div style="text-align:right"><div class="stocknum">${m.qty}</div><div class="stockunit">${esc(m.unit||'unidades')}</div></div><div class="stock-actions"><button data-stock-change="${m.id}" data-amount="-1" aria-label="Diminuir">−</button><button data-stock-change="${m.id}" data-amount="1" aria-label="Aumentar">+</button><details class="stockmenu"><summary aria-label="Ações do material">⋮</summary><div class="stockmenuitems"><button data-correct="${m.id}">✎ Editar quantidade</button><button data-rename-material="${m.id}">Renomear</button><button data-delete-material="${m.id}">× Excluir material</button></div></details></div></div>`).join('')||'<div class="empty">Nenhum material cadastrado.</div>';
 }
 function renderHistory(){$('historyList').innerHTML=db.history.length?db.history.slice(0,150).map(h=>`<div class="task"><div class="taskmain">${esc(h.msg)}<div class="taskmeta">${new Date(h.at).toLocaleString('pt-BR')}</div></div></div>`).join(''):'<div class="empty">Ainda não há registros.</div>'}
 function render(){$('todayLabel').textContent=fmtDate().toUpperCase();renderTasks();renderStock();renderHistory()}
-let petBubbleTimer=null;function hidePetBubble(){const b=$('petBubbleClose');if(b)b.classList.add('hidden')}function showPet(s){const b=$('petBubbleClose');b.textContent=s+'　×';b.classList.remove('hidden');clearTimeout(petBubbleTimer);petBubbleTimer=setTimeout(hidePetBubble,6500);$('pet').classList.remove('bounce');void $('pet').offsetWidth;$('pet').classList.add('bounce')}
+let petBubbleTimer=null;function hidePetBubble(){const b=$('petBubbleClose');if(b)b.classList.add('hidden')}function showPet(s,duration=3800){const b=$('petBubbleClose');b.textContent=s;b.classList.remove('hidden');clearTimeout(petBubbleTimer);petBubbleTimer=setTimeout(hidePetBubble,duration);$('pet').classList.remove('bounce');void $('pet').offsetWidth;$('pet').classList.add('bounce')}
 function speak(s,important=false){
  const cfg=db.settings;if(cfg.speechMode==='off'||(cfg.speechMode==='important'&&!important))return;
  if(!('speechSynthesis'in window))return;
@@ -894,6 +1003,61 @@ function command(raw){
  reply('Posso consultar tarefas e estoque, concluir tarefas ou adicionar um lembrete para hoje.')
 }
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(document.body.dataset.period==='night'&&dayKey()===realTodayKey())return;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['home','stock','history'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});
+document.body.addEventListener('change',e=>{const roleSelect=e.target.closest('#saturdayRoleSelect');if(roleSelect){db.saturdayOverrides[dayKey()]=roleSelect.value;db.shiftStates[dayKey()]={morning:false,afternoon:false,morningEnded:false,afternoonEnded:false};save();log(`Escala de sábado definida: ${roleSelect.value}.`);renderTasks();}});
+// Um único menu flutuante por vez. O painel é movido para document.body,
+// evitando cortes por overflow/transform dos cards e impedindo duplicações.
+let ziaActiveMenu=null;
+function closeZiaMenu(){
+  if(!ziaActiveMenu)return;
+  const {panel,owner,nextSibling}=ziaActiveMenu;
+  panel.classList.remove('zia-menu-portal');
+  panel.style.removeProperty('position');panel.style.removeProperty('top');
+  panel.style.removeProperty('left');panel.style.removeProperty('right');
+  panel.style.removeProperty('z-index');panel.style.removeProperty('max-height');
+  if(owner&&owner.isConnected){
+    if(nextSibling&&nextSibling.parentNode===owner)owner.insertBefore(panel,nextSibling);
+    else owner.appendChild(panel);
+  }else panel.remove();
+  ziaActiveMenu=null;
+}
+function openZiaMenu(owner,trigger,panel){
+  closeZiaMenu();
+  const nextSibling=panel.nextSibling;
+  document.body.appendChild(panel);
+  panel.classList.add('zia-menu-portal');
+  panel.style.display='grid';
+  const r=trigger.getBoundingClientRect();
+  const width=Math.min(Math.max(panel.offsetWidth,180),window.innerWidth-24);
+  const left=Math.max(12,Math.min(r.right-width,window.innerWidth-width-12));
+  const roomBelow=window.innerHeight-r.bottom-12;
+  const roomAbove=r.top-12;
+  const estimated=Math.min(panel.scrollHeight,220);
+  const top=(roomBelow>=Math.min(estimated,120)||roomBelow>=roomAbove)
+    ?Math.min(window.innerHeight-12-estimated,r.bottom+5)
+    :Math.max(12,r.top-5-estimated);
+  panel.style.left=left+'px';panel.style.top=Math.max(12,top)+'px';
+  ziaActiveMenu={panel,owner,nextSibling,trigger};
+}
+document.body.addEventListener('click',e=>{
+  const trigger=e.target.closest('.taskmenu summary,.stockmenu summary');
+  if(trigger){
+    e.preventDefault();e.stopPropagation();
+    const owner=trigger.parentElement;
+    const panel=owner.querySelector('.taskmenuitems,.stockmenuitems');
+    if(ziaActiveMenu&&ziaActiveMenu.trigger===trigger){closeZiaMenu();return;}
+    if(panel)openZiaMenu(owner,trigger,panel);
+    return;
+  }
+  if(ziaActiveMenu){
+    if(ziaActiveMenu.panel.contains(e.target)){
+      // Restaura o painel antes que a ação da opção possa redesenhar a tela.
+      closeZiaMenu();
+    }else closeZiaMenu();
+  }
+},true);
+window.addEventListener('scroll',()=>{if(ziaActiveMenu)closeZiaMenu()},true);
+window.addEventListener('resize',()=>{if(ziaActiveMenu)closeZiaMenu()});
+
 document.body.addEventListener('click',e=>{
   let day=e.target.closest('[data-calendar-date]');
 if(day){
@@ -918,6 +1082,7 @@ return;
  let ea=e.target.closest('[data-edit-appointment]');if(ea)editAppointment(ea.dataset.editAppointment);
  let da=e.target.closest('[data-delete-appointment]');if(da&&confirm('Excluir este atendimento?')){db.appointments=db.appointments.filter(a=>a.id!==da.dataset.deleteAppointment);save();renderTasks()}
  let ed=e.target.closest('[data-correct]');if(ed){let m=db.materials.find(x=>x.id===ed.dataset.correct);if(m){let name=prompt('Nome do material:',m.name);if(name===null)return;let v=prompt(`Quantidade atual de ${name}:`,m.qty);if(v===null||v.trim()===''||!Number.isFinite(Number(v))||Number(v)<0)return alert('Informe uma quantidade válida.');m.name=name.trim()||m.name;m.qty=Number(v);m.certainty='Saldo atualizado manualmente';save();log(`Material atualizado: ${m.name}, saldo ${m.qty}.`);renderStock()}} 
+ let renameMat=e.target.closest('[data-rename-material]');if(renameMat){let m=db.materials.find(x=>x.id===renameMat.dataset.renameMaterial);if(m){let name=prompt('Novo nome do material:',m.name);if(name?.trim()){const old=m.name;m.name=name.trim();save();log(`Material renomeado: ${old} → ${m.name}.`);renderStock()}}return}
  let delMat=e.target.closest('[data-delete-material]');if(delMat){let m=db.materials.find(x=>x.id===delMat.dataset.deleteMaterial);if(m&&confirm(`Excluir "${m.name}" do estoque? Esta ação não pode ser desfeita.`)){db.materials=db.materials.filter(x=>x.id!==m.id);save();log(`Material excluído do estoque: ${m.name}.`);renderStock()}return}
 });
   $('prevWeek').onclick=()=>{
@@ -952,7 +1117,11 @@ $('voiceRate').oninput=e=>$('rateLabel').textContent=Number(e.target.value).toLo
 $('testVoice').onclick=()=>{db.settings.speechMode='all';db.settings.voiceURI=$('voiceSelect').value;db.settings.rate=Number($('voiceRate').value);db.settings.pitch=Number($('voicePitch').value);save();speak('Oi! Eu sou a Zia. Vamos deixar nosso dia mais leve e organizado?');};
 $('saveVoice').onclick=()=>{db.settings.speechMode=$('speechMode').value;db.settings.voiceURI=$('voiceSelect').value;db.settings.rate=Number($('voiceRate').value);db.settings.pitch=Number($('voicePitch').value);save();$('settingsModal').classList.add('hidden');reply(db.settings.speechMode==='off'?'Modo silencioso ativado. Continuo funcionando por texto e pelo microfone.':'Preferências de voz salvas.');};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=() => $(b.dataset.close).classList.add('hidden'));
-$('petButton').onclick=()=>{hidePetBubble();openSettings()};$('petBubbleClose').onclick=hidePetBubble;
+function togglePetMenu(force){const menu=$('petMenu'),open=typeof force==='boolean'?force:menu.classList.contains('hidden');menu.classList.toggle('hidden',!open);$('petButton').setAttribute('aria-expanded',String(open));if(open)hidePetBubble()}
+$('petButton').onclick=()=>togglePetMenu();$('petSettingsBtn').onclick=()=>{togglePetMenu(false);openSettings()};
+document.addEventListener('click',e=>{if(!$('ziaHeader').contains(e.target))togglePetMenu(false)});
+$('petBubbleClose').onclick=hidePetBubble;
+
 $('photoBtn').onclick=()=>$('photoInput').click();$('chooseAgain').onclick=()=>$('photoInput').click();
 $('evidenceInput').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!f.type.startsWith('image/'))return alert('Escolha uma imagem.');evidenceFile=f;$('evidencePreview').src=URL.createObjectURL(f);$('evidencePreview').classList.remove('hidden')};
 $('saveEvidence').onclick=saveEvidencePhoto;
@@ -964,7 +1133,7 @@ $('analyzePhoto').onclick=async()=>{if(!currentImage)return reply('Escolha uma f
 try{let encoded=await imageToBase64(currentImage),response=await fetch('https://zia-gemini-api.kbelima18.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...encoded,question,notes})}),data={};try{data=await response.json()}catch(e){}if(!response.ok||data.error)throw new Error(data.error||`O serviço respondeu com código ${response.status}.`);let description=data.description||data.text||data.response;if(!description)throw new Error('A resposta não trouxe descrição da imagem.');$('photoResult').textContent=description;log(`Análise de imagem (${currentImage.name}). Pergunta: ${question}. Resposta: ${description}`,'image');reply('Recebi a análise. Confira a resposta antes de usar qualquer informação no trabalho.')}
 catch(err){$('photoResult').textContent='Não consegui analisar a imagem. '+(err?.message||'Erro desconhecido')+'\nConfira a conexão e tente novamente.';reply('Não consegui concluir a análise. A mensagem de erro está na janela.')}
 finally{b.disabled=false;b.textContent='Analisar imagem'}};
-render();loadVoices();updateDayTheme();setInterval(()=>{const old=document.body.dataset.period;updateDayTheme();if(old!==document.body.dataset.period)renderTasks()},60000);
+render();showPet('Oi, estou aqui!',3800);loadVoices();updateDayTheme();setInterval(()=>{const old=document.body.dataset.period;updateDayTheme();if(old!==document.body.dataset.period)renderTasks()},60000);
 </script>
 </body>
 </html>
