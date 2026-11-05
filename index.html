@@ -352,7 +352,7 @@ body[data-period="night"] #ziaTopUnified #shiftPanel .shift-card{
 
 <div id="chatArea"></div>
 <div class="nav">
- <button class="active" data-tab="home">Hoje</button><button data-tab="stock">Estoque</button><button data-tab="history">Histórico</button>
+ <button class="active" data-tab="home">Hoje</button><button data-tab="stock">Estoque</button><button data-tab="orders">Pedidos</button><button data-tab="history">Histórico</button>
 </div>
 
 
@@ -497,6 +497,15 @@ body[data-period="night"] #ziaTopUnified #shiftPanel .shift-card{
  <div class="notice">Ajuste os saldos pelos botões +/−. Para editar, renomear ou excluir, use o menu ⋮ de cada material.</div>
  <div class="card"><div class="sectionhead"><h2>Materiais</h2><button class="smallbtn" id="addMaterialBtn">＋ Material</button></div><div id="stockList"></div></div>
 </section>
+<section id="orders" class="hidden">
+ <div class="card">
+  <div class="sectionhead"><h2>Lista de Pedidos</h2><button class="smallbtn" id="clearOrdersBtn">Limpar</button></div>
+  <p class="muted" style="margin:0 0 10px">Anote aqui o que precisa pedir.</p>
+  <textarea id="ordersNote" class="field" rows="12" placeholder="Digite seus pedidos aqui…" aria-label="Lista de pedidos"></textarea>
+  <div class="row" style="justify-content:flex-end"><button class="primary" id="saveOrdersBtn">Salvar</button></div>
+  <p class="muted" id="ordersSavedLabel" aria-live="polite">Suas anotações ficam salvas neste navegador.</p>
+ </div>
+</section>
 <section id="history" class="hidden"><div class="card"><div class="sectionhead"><h2>Histórico</h2><button class="smallbtn" id="exportBtn">Exportar</button></div><div id="historyList"></div></div></section>
 <p class="footerhint">Zia · Dados guardados neste navegador. Faça backups e não registre dados identificáveis de pacientes.</p>
 </div>
@@ -639,7 +648,7 @@ const defaults=[
 {id:'temp',title:'Registrar as temperaturas da tarde no sistema Acredite-se',time:'Início do turno da tarde (14h)',kind:'Obrigatória',group:'main',shift:'afternoon'},
 {id:'closing',title:'Checklist de fechamento: computadores, ar-condicionado e bandeirolas',time:'Final do turno da tarde',kind:'Obrigatória',group:'main',shift:'afternoon'},
 {id:'coffee',title:'Programar a cafeteira para o dia seguinte',time:'Final do turno da tarde',kind:'Obrigatória',group:'main',shift:'afternoon'},
-{id:'plant',title:'Conferir se a planta precisa de água',time:'Quando houver disponibilidade',kind:'Flexível',group:'flex'},
+{id:'plant',title:'Conferir se a planta precisa de água',time:'Durante o turno da tarde',kind:'Obrigatória',group:'main',shift:'afternoon'},
 {id:'bathroom',title:'Lavar o banheiro',time:'Quando houver disponibilidade',kind:'Oportunidade',group:'flex'},
 {id:'sweep',title:'Varrer e passar pano',time:'Quando houver disponibilidade',kind:'Oportunidade',group:'flex'},
 {id:'stock_weekly',title:'Conferir o estoque (pelo menos uma vez na semana)',time:'Semanal',kind:'Periódica',group:'flex',weekly:true}
@@ -647,6 +656,7 @@ const defaults=[
 function fresh(){return {customTasks:[],materials:initialMaterials.map(x=>({...x})),history:[],completions:{},movements:[],appointments:[],routineOverrides:{},hiddenTasks:{},taskOrder:{},dayNotes:{},weeklyCompletions:{},shiftStates:{},dayExceptions:{},settings:{speechMode:'all',voiceURI:'',rate:.92,pitch:1.08,microphoneEnabled:true}}}
 let db;try{db=JSON.parse(localStorage.getItem('ziaDB'))||fresh()}catch(e){db=fresh()}
 for(const k of ['customTasks','materials','history','completions','movements','appointments','routineOverrides','hiddenTasks','taskOrder','dayNotes','weeklyCompletions','shiftStates','dayExceptions','saturdayOverrides'])db[k]??=(k==='materials'?initialMaterials.map(x=>({...x})):['appointments','customTasks','history','movements'].includes(k)?[]:{});
+db.orderNotes??='';
 db.pendingTasks??=[];
 db.carryoverTasks??={};
 db.shiftStates??={};db.dayExceptions??={};db.saturdayOverrides??={};
@@ -784,13 +794,28 @@ const saturdayRoutines={
   ['sat_lab_close','Encerramento: desligar computadores e ar-condicionado, desligar a TV, recolher bandeirolas, conferir banheiros e bater o ponto','09:50–10:00']
  ].map(([id,title,time])=>({id,title,time,kind:'Rotina de sábado',group:'main',shift:'morning',saturday:true}))
 };
+function taskOccursOn(task,k){
+ const freq=task.frequency||task.recurrence||'once';
+ const start=task.startDate||task.date||k;
+ if(k<start)return false;
+ const date=dateObj(k),origin=dateObj(start);
+ if(freq==='daily')return true;
+ if(freq==='weekdays')return date.getDay()>=1&&date.getDay()<=5;
+ if(freq==='weekly')return date.getDay()===origin.getDay();
+ if(freq==='biweekly')return date.getDay()===origin.getDay()&&Math.floor((date-origin)/604800000)%2===0;
+ return k===start;
+}
+function taskSettings(task){
+ if(task.id==='plant')return {...task,kind:'Obrigatória',group:'main',shift:'afternoon',time:(db.routineOverrides.plant||{}).time||'Durante o turno da tarde'};
+ return task;
+}
 function todaysTasks(){
  let d=dateObj(dayKey()).getDay(),k=dayKey(),base=[];
  if(d!==0&&d!==6)base=defaults.filter(t=>!t.weekly);
  if(d===6){let role=saturdayRole(k);if(role&&saturdayRoutines[role])base=saturdayRoutines[role].map(t=>({...t}));}
- base=base.filter(t=>!(db.hiddenTasks[k]||[]).includes(t.id)).map(t=>({...t,...(db.routineOverrides[t.id]||{})}));
+ base=base.filter(t=>!(db.hiddenTasks[k]||[]).includes(t.id)).map(t=>taskSettings({...t,...(db.routineOverrides[t.id]||{})})).filter(t=>taskOccursOn({...t,...(db.routineOverrides[t.id]||{})},k));
  if(d!==0&&d!==6)base.push({...defaults.find(t=>t.id==='stock_weekly')});
- const custom=db.customTasks.filter(t=>t.date===k).map(t=>({...t,group:t.group||'main'}));
+ const custom=db.customTasks.filter(t=>taskOccursOn(t,k)).map(t=>({...t,group:t.group||'main'}));
  const carried=(db.carryoverTasks[k]||[]).map(t=>({...t,group:t.group||'main'}));
  const all=[...base,...custom,...carried].map(t=>({...t,done:t.weekly?weeklyDone(t.id):!!(db.completions[k]||{})[t.id]}));
  const order=db.taskOrder.global||[];
@@ -799,8 +824,8 @@ function todaysTasks(){
 function taskHtml(t){return `<div class="task" data-task="${esc(t.id)}" data-group="${t.group||'main'}">
 <button class="draghandle" data-drag="${esc(t.id)}" aria-label="Arrastar tarefa">↕</button>
 <button class="check ${t.done?'done':''}" data-check="${esc(t.id)}">${t.done?'✓':''}</button>
-<div class="taskmain"><div class="tasktitle" style="${t.done?'text-decoration:line-through;color:#777':''}">${esc(t.title)}</div><div class="taskmeta">${esc(t.time||'Sem horário')} · ${esc(t.kind||'Adicional')}</div>${t.done?'<span class="pill">Concluída</span>':''}</div>
-<details class="taskmenu"><summary aria-label="Ações da tarefa">⋮</summary><div class="taskmenuitems"><button data-photo-task="${esc(t.id)}">▧ Anexar foto</button><button data-edit-task="${esc(t.id)}">✎ Editar</button><button data-delete-task="${esc(t.id)}">× Excluir</button></div></details></div>`}
+<div class="taskmain"><div class="tasktitle" style="${t.done?'text-decoration:line-through;color:#777':''}">${esc(t.title)}</div><div class="taskmeta">${t.pinned?'📌 Fixa · ':''}${t.frequency&&t.frequency!=='once'?({'daily':'Diária','weekdays':'Dias úteis','weekly':'Semanal','biweekly':'Quinzenal'}[t.frequency]+' · '):''}${esc(t.time||'Sem horário')} · ${esc(t.kind||'Adicional')}</div>${t.done?'<span class="pill">Concluída</span>':''}</div>
+<details class="taskmenu"><summary aria-label="Ações da tarefa">⋮</summary><div class="taskmenuitems"><button data-photo-task="${esc(t.id)}">▧ Anexar foto</button><button data-edit-task="${esc(t.id)}">✎ Editar</button><button data-delete-task="${esc(t.id)}">× Excluir</button><button data-task-recurring="${esc(t.id)}">📌 Fixar / Recorrente</button></div></details></div>`}
 function renderTasks(){
  renderCalendar();updateDayTheme();
  const selectedKey=dayKey(),isToday=selectedKey===realTodayKey(),period=updateDayTheme(),st=shiftState();
@@ -953,8 +978,24 @@ function complete(id){
 }
 function addTask(group='main'){
  let title=prompt('O que você precisa fazer hoje?');if(!title?.trim())return;
- let id='custom_'+Date.now();db.customTasks.push({id,title:title.trim(),date:dayKey(),time:'A definir',kind:group==='flex'?'Oportunidade':'Extra de hoje',group});
+ let id='custom_'+Date.now();db.customTasks.push({id,title:title.trim(),date:dayKey(),startDate:dayKey(),frequency:'once',pinned:false,time:'A definir',kind:group==='flex'?'Oportunidade':'Extra de hoje',group});
  save();log('Tarefa adicionada para hoje: '+title.trim());renderTasks();reply('Adicionei somente para hoje. Sua rotina padrão continua igual.')
+}
+function configureTaskRecurrence(id){
+ let t=todaysTasks().find(x=>x.id===id);if(!t)return;
+ let target=id.startsWith('custom_')?db.customTasks.find(x=>x.id===id):(db.routineOverrides[id]??(db.routineOverrides[id]={}));
+ if(!target)return;
+ const current=target.frequency||target.recurrence||'once';
+ const choices='0 - Apenas uma vez\n1 - Todos os dias\n2 - Dias úteis\n3 - Semanalmente\n4 - Quinzenalmente';
+ const answer=prompt('Escolha a frequência:\n'+choices,({'once':'0','daily':'1','weekdays':'2','weekly':'3','biweekly':'4'})[current]||'0');
+ if(answer===null)return;
+ const map={'0':'once','1':'daily','2':'weekdays','3':'weekly','4':'biweekly'};
+ if(!map[answer])return alert('Escolha uma opção de 0 a 4.');
+ target.frequency=map[answer];
+ if(!target.startDate)target.startDate=target.date||dayKey();
+ target.pinned=target.frequency!=='once'?!target.pinned:!target.pinned;
+ if(target.frequency==='once'){target.startDate=dayKey();if(id.startsWith('custom_'))target.date=dayKey();}
+ save();log(`Recorrência atualizada: ${t.title} · ${target.frequency}.`);renderTasks();
 }
 function editTask(id){
  let t=todaysTasks().find(x=>x.id===id);if(!t)return;
@@ -997,12 +1038,12 @@ function command(raw){
  if(/(temperaturas).*(conclu|feito|regist)/.test(q)||/(conclu|feito).*(temperaturas)/.test(q)){complete('temp');return}
  if(/(fechamento|desliguei|desligar computadores|ar-condicionado|bandeirolas)/.test(q)){complete('closing');return}
  let add=s.match(/(?:adiciona|cria|lembra|anota)(?:r|me)?\s+(?:uma tarefa|que|de)?\s*(.+)/i);
- if(add&&add[1]){let title=add[1].replace(/[.!?]+$/,'').trim();if(title.length<3)return reply('Me diga o que preciso lembrar.');db.customTasks.push({id:'custom_'+Date.now(),title,date:dayKey(),time:'A definir',kind:'Extra de hoje',group:'main'});save();log('Tarefa adicionada: '+title);renderTasks();reply('Anotei para hoje: '+title);return}
+ if(add&&add[1]){let title=add[1].replace(/[.!?]+$/,'').trim();if(title.length<3)return reply('Me diga o que preciso lembrar.');db.customTasks.push({id:'custom_'+Date.now(),title,date:dayKey(),startDate:dayKey(),frequency:'once',pinned:false,time:'A definir',kind:'Extra de hoje',group:'main'});save();log('Tarefa adicionada: '+title);renderTasks();reply('Anotei para hoje: '+title);return}
  let recv=s.match(/(?:chegaram|recebi|recebemos)\s+(\d+)\s+(.+)/i);
  if(recv){let n=Number(recv[1]),term=recv[2].toLowerCase(),m=db.materials.find(m=>term.includes(m.name.toLowerCase())||m.name.toLowerCase().includes(term.replace(/s$/,'')));if(m){m.qty+=n;m.certainty='Saldo atualizado manualmente';save();log(`Saldo ajustado: ${m.name}, +${n}; total ${m.qty}.`);renderStock();reply(`Atualizei ${m.name}. Saldo: ${m.qty}.`)}else reply('Não identifiquei o material. Abra Estoque e selecione-o.');return}
  reply('Posso consultar tarefas e estoque, concluir tarefas ou adicionar um lembrete para hoje.')
 }
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(document.body.dataset.period==='night'&&dayKey()===realTodayKey())return;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['home','stock','history'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab))});
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(document.body.dataset.period==='night'&&dayKey()===realTodayKey())return;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['home','stock','orders','history'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab));if(b.dataset.tab==='orders')$('ordersNote').value=db.orderNotes||''});
 document.body.addEventListener('change',e=>{const roleSelect=e.target.closest('#saturdayRoleSelect');if(roleSelect){db.saturdayOverrides[dayKey()]=roleSelect.value;db.shiftStates[dayKey()]={morning:false,afternoon:false,morningEnded:false,afternoonEnded:false};save();log(`Escala de sábado definida: ${roleSelect.value}.`);renderTasks();}});
 // Um único menu flutuante por vez. O painel é movido para document.body,
 // evitando cortes por overflow/transform dos cards e impedindo duplicações.
@@ -1077,6 +1118,7 @@ return;
 
  let c=e.target.closest('[data-check]');if(c)complete(c.dataset.check);
  let et=e.target.closest('[data-edit-task]');if(et)editTask(et.dataset.editTask);
+ let rt=e.target.closest('[data-task-recurring]');if(rt){configureTaskRecurrence(rt.dataset.taskRecurring);return}
  let dt=e.target.closest('[data-delete-task]');if(dt)deleteTask(dt.dataset.deleteTask)
  let ma=e.target.closest('[data-move-appointment]');if(ma){moveAppointment(ma.dataset.moveAppointment,Number(ma.dataset.delta));return}
  let ea=e.target.closest('[data-edit-appointment]');if(ea)editAppointment(ea.dataset.editAppointment);
@@ -1098,6 +1140,10 @@ $('sendBtn').onclick=()=>command($('commandInput').value);$('commandInput').onke
 document.querySelectorAll('[data-command]').forEach(b=>b.onclick=()=>command(b.dataset.command));
 $('addTaskBtn').onclick=()=>addTask('main');$('addFlexibleBtn').onclick=()=>addTask('flex');$('editRoutineBtn').onclick=editRoutine;$('addAppointmentBtn').onclick=addAppointment;
 $('saveNoteBtn').onclick=()=>{db.dayNotes[dayKey()]=$('dayNote').value.trim();save();log('Ocorrência de hoje atualizada.');reply('Salvei a ocorrência somente para hoje.')};
+$('ordersNote').value=db.orderNotes||'';
+$('ordersNote').addEventListener('input',()=>{db.orderNotes=$('ordersNote').value;save();$('ordersSavedLabel').textContent='Salvo automaticamente.'});
+$('saveOrdersBtn').onclick=()=>{db.orderNotes=$('ordersNote').value;save();$('ordersSavedLabel').textContent='Lista salva.';log('Lista de pedidos atualizada.')};
+$('clearOrdersBtn').onclick=()=>{if(!confirm('Limpar toda a lista de pedidos?'))return;$('ordersNote').value='';db.orderNotes='';save();$('ordersSavedLabel').textContent='Lista limpa.';log('Lista de pedidos limpa.')};
 $('addMaterialBtn').onclick=()=>{let name=prompt('Nome do material:');if(!name?.trim())return;let raw=prompt('Quantidade inicial:','0');if(raw===null||raw.trim()===''||!Number.isFinite(Number(raw))||Number(raw)<0)return alert('Informe uma quantidade válida.');let qty=Number(raw);db.materials.push({id:'mat_'+Date.now(),name:name.trim(),qty,certainty:'Saldo informado manualmente',unit:'unidades'});save();log(`Material cadastrado: ${name}, saldo ${qty}.`);renderStock()};
 async function backup(){let photos=[];try{photos=await getAllEvidence()}catch(e){}let blob=new Blob([JSON.stringify({app:'zia',version:8,exportedAt:new Date().toISOString(),data:db,evidence:photos},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='zia-backup-'+dayKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);log('Backup exportado, incluindo as fotos de evidência disponíveis.')}
 $('exportBtn').onclick=backup;
